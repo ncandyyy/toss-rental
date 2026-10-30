@@ -5,7 +5,8 @@
  * 1) 스크롤 모드 (기본): [data-carousel-pin] 래퍼 안에서 캐러셀이 양옆을 꽉 채운 띠가 되어 화면 가운데에 고정되고,
  *    스크롤을 내리는 만큼 슬라이드가 1→4로 넘어갑니다. 4장을 다 보면 다음 섹션으로 내려갑니다.
  *    화면이 낮으면 안쪽 내용을 줄여서 화면에 맞춥니다.
- * 2) 자동 넘김 모드: 화면 높이가 아주 낮으면(가로로 눕힌 휴대폰 등) 고정 대신 일정 간격으로 자동 넘김.
+ * 2) 자동 넘김 모드: 휴대폰(폭 599px 이하)이나 화면 높이가 아주 낮을 때.
+ *    스크롤 고정 없이 일정 간격으로 자동으로 넘어가고, 손가락으로 좌우로 밀어서도 넘길 수 있습니다.
  *
  * 공통: 오른쪽 인디케이터 클릭, 좌우 스와이프, 키보드 ←/→,
  *       슬라이드 안 <video data-src> 는 해당 슬라이드가 보일 때만 재생.
@@ -79,7 +80,21 @@ class FeatureCarousel {
   setupPin() {
     if (!this.pin) return;
 
+    const mobile = window.matchMedia("(max-width: 599px)");
+
+    const unpin = () => {
+      this.pin.classList.remove("is-pinned");
+      ["--pin-h", "--pin-top", "--pin-vh", "--pin-fit"].forEach((k) => this.pin.style.removeProperty(k));
+      this.setMode("auto");
+    };
+
     const measure = () => {
+      // 휴대폰: 스크롤 고정 없이 자동 넘김 + 좌우 스와이프
+      if (mobile.matches) {
+        unpin();
+        return;
+      }
+
       const vh = window.innerHeight;
       const topbar = document.querySelector(".topbar")?.offsetHeight || 0;
 
@@ -103,8 +118,7 @@ class FeatureCarousel {
         this.setMode("scroll");
         this.onScroll();
       } else {
-        this.pin.classList.remove("is-pinned");
-        this.setMode("auto");
+        unpin();
       }
     };
 
@@ -129,6 +143,7 @@ class FeatureCarousel {
       resizeTimer = setTimeout(measure, 150);
     });
     window.addEventListener("scroll", onScroll, { passive: true });
+    mobile.addEventListener?.("change", measure);
     if (document.fonts?.ready) document.fonts.ready.then(measure);
     measure();
   }
@@ -342,7 +357,11 @@ class FeatureCarousel {
     };
     area.addEventListener("pointerup", end);
     area.addEventListener("pointercancel", end);
-    area.addEventListener("lostpointercapture", end);
+    // 터치는 손가락이 닿은 이미지가 먼저 이벤트를 잡고 있다가 viewport 로 넘어오며 lostpointercapture 가 생깁니다.
+    // 그건 손을 뗀 게 아니므로, viewport 자신이 잡고 있던 것을 놓쳤을 때만 끝냅니다.
+    area.addEventListener("lostpointercapture", (e) => {
+      if (e.target === area) end();
+    });
     area.addEventListener("dragstart", (e) => e.preventDefault());
   }
 
