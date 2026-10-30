@@ -173,7 +173,7 @@
 }
 
 .fc.is-playing .fc__dot.is-active::after {
-  animation: fc-progress var(--slide-ms, 4500ms) linear forwards;
+  animation: fc-progress var(--slide-ms, 3500ms) linear forwards;
 }
 
 .fc.is-paused .fc__dot.is-active::after {

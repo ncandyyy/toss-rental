@@ -28,7 +28,7 @@ export const CONFIG = {
   CONTACT_HOURS: [9, 10, 11, 12, 13, 14, 15, 16, 17],
 
   /** 기능 캐러셀 자동 넘김 간격 (ms) */
-  CAROUSEL_INTERVAL: 4500,
+  CAROUSEL_INTERVAL: 3500,
 
   /** 시간 계산 기준 */
   TIMEZONE: "Asia/Seoul",
