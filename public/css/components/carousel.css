@@ -186,11 +186,6 @@
   animation-play-state: paused;
 }
 
-/* 스크롤 모드: 인디케이터가 스크롤 진행만큼 차오릅니다 */
-.fc.is-scroll .fc__dot.is-active::after {
-  transform: scaleY(var(--p, 0));
-  animation: none;
-}
 
 @keyframes fc-progress {
   from {

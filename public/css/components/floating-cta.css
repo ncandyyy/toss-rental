@@ -3,23 +3,37 @@
    ========================================================= */
 .floating-cta {
   position: fixed;
-  left: 50%;
+  left: 0;
+  right: 0;
   bottom: 0;
   z-index: var(--z-cta);
-  width: min(100%, var(--container));
-  padding: 12px var(--gutter) calc(12px + env(safe-area-inset-bottom));
-  background: linear-gradient(to top, rgb(250 250 251 / 0.96) 60%, rgb(250 250 251 / 0));
-  translate: -50% 110%;
+  padding: 22px var(--gutter) calc(12px + env(safe-area-inset-bottom));
+  translate: 0 110%;
   transition: translate 0.45s var(--ease-out);
   pointer-events: none;
 }
 
+/* 버튼 뒤 흐린 배경: 화면 좌우 끝까지, 위로 갈수록 자연스럽게 사라짐 */
+.floating-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to top, rgb(250 250 251 / 0.9) 45%, rgb(250 250 251 / 0.55) 75%, rgb(250 250 251 / 0));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(to top, #000 55%, transparent);
+  mask-image: linear-gradient(to top, #000 55%, transparent);
+}
+
 .floating-cta.is-show {
-  translate: -50% 0;
+  translate: 0 0;
   pointer-events: auto;
 }
 
 .floating-cta__btn {
+  max-width: calc(var(--container) - var(--gutter) * 2);
+  margin-inline: auto;
   display: flex;
   align-items: center;
   justify-content: center;

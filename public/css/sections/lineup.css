@@ -64,22 +64,16 @@
   height: auto;
 }
 
-/* ---------- 기능 캐러셀 (스크롤 고정 · 양옆 꽉 채움) ----------
-   .is-pinned 일 때 캐러셀이 화면 양옆 끝까지 채워진 띠 모양으로 바뀌고(높이는 원래대로),
-   래퍼 높이(--pin-h)만큼 스크롤하는 동안 화면 세로 가운데(--pin-top)에 고정된 채 슬라이드가 넘어갑니다.
-   화면이 낮으면 안쪽 내용만 --pin-fit 비율로 줄입니다. 값은 carousel.js 가 계산합니다. */
+/* ---------- 기능 캐러셀 (데스크톱: 양옆 꽉 채운 띠 + 휠 잠금) ----------
+   .is-pinned 일 때(마우스가 있는 데스크톱) 캐러셀이 화면 양옆 끝까지 채운 띠가 됩니다. 높이는 원래대로.
+   화면 가운데에 오면 휠로 슬라이드를 넘기는 동안 페이지가 멈춰 있어 위아래 섹션이 그대로 보입니다(carousel.js).
+   화면이 낮으면 안쪽 내용만 --pin-fit 비율로 줄입니다. */
 .fc-pin {
   position: relative;
   margin-top: max(48px, calc(81 * var(--u)));
 }
 
-.fc-pin.is-pinned {
-  height: var(--pin-h);
-}
-
 .fc-pin.is-pinned .fc {
-  position: sticky;
-  top: var(--pin-top, 0px);
   width: 100vw;
   height: var(--pin-vh, auto);
   margin-left: calc(50% - 50vw);

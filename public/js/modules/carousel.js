@@ -2,14 +2,16 @@
  * 기능 소개 캐러셀 (어두운 슬라이드)
  *
  * 두 가지 모드로 동작합니다.
- * 1) 스크롤 모드 (기본): [data-carousel-pin] 래퍼 안에서 캐러셀이 양옆을 꽉 채운 띠가 되어 화면 가운데에 고정되고,
- *    스크롤을 내리는 만큼 슬라이드가 1→4로 넘어갑니다. 4장을 다 보면 다음 섹션으로 내려갑니다.
- *    화면이 낮으면 안쪽 내용을 줄여서 화면에 맞춥니다.
- * 2) 자동 넘김 모드: 휴대폰(폭 599px 이하)이나 화면 높이가 아주 낮을 때.
- *    스크롤 고정 없이 일정 간격으로 자동으로 넘어가고, 손가락으로 좌우로 밀어서도 넘길 수 있습니다.
+ * 1) 휠 잠금 모드 (마우스/트랙패드가 있는 데스크톱, 폭 600px 이상)
+ *    캐러셀이 양옆을 꽉 채운 띠로 바뀌고, 스크롤해서 화면 가운데에 오면 페이지가 그 자리에 멈춘 채
+ *    휠을 굴릴 때마다 슬라이드만 넘어갑니다. 위아래 섹션은 그대로 보입니다.
+ *    4장을 다 보면(위로 굴릴 땐 1장으로 돌아오면) 다시 평소처럼 페이지가 스크롤됩니다.
+ *    화면이 낮으면 안쪽 내용을 줄여서 캐러셀 전체가 화면에 들어오게 합니다.
+ * 2) 자동 넘김 모드 (휴대폰·터치 태블릿, 화면 높이가 아주 낮을 때)
+ *    일정 간격으로 자동으로 넘어가고, 손가락으로 좌우로 밀어서도 넘길 수 있습니다.
  *
- * 공통: 오른쪽 인디케이터 클릭, 좌우 스와이프, 키보드 ←/→,
- *       슬라이드 안 <video data-src> 는 해당 슬라이드가 보일 때만 재생.
+ * 공통: 오른쪽 인디케이터 클릭, 좌우 스와이프(마우스 드래그 포함), 키보드 ←/→,
+ *       슬라이드 안 <video> 는 해당 슬라이드가 보일 때만 재생.
  */
 import { CONFIG } from "../config.js";
 
@@ -56,7 +58,11 @@ class FeatureCarousel {
     this.interval = Number(root.dataset.interval) || CONFIG.CAROUSEL_INTERVAL;
     this.index = -1;
     this.mode = "auto";
-    this.step = 0;
+    this.engaged = false; // 휠 잠금 중인지
+    this.wheelSum = 0;
+    this.lastStepAt = 0;
+    this.targetTop = 0; // 잠금 시 캐러셀 윗변이 놓일 화면 위치
+    this.visualH = 0;
     this.timer = null;
     this.remaining = 0;
     this.startedAt = 0;
@@ -75,22 +81,23 @@ class FeatureCarousel {
   }
 
   /* =========================================================
-     스크롤 고정 모드
+     휠 잠금 모드 (데스크톱)
      ========================================================= */
   setupPin() {
     if (!this.pin) return;
 
-    const mobile = window.matchMedia("(max-width: 599px)");
+    // 마우스/트랙패드가 있는 넓은 화면에서만 (터치 기기는 자동 넘김 + 스와이프)
+    const desktop = window.matchMedia("(min-width: 600px) and (hover: hover) and (pointer: fine)");
 
     const unpin = () => {
       this.pin.classList.remove("is-pinned");
-      ["--pin-h", "--pin-top", "--pin-vh", "--pin-fit"].forEach((k) => this.pin.style.removeProperty(k));
+      ["--pin-vh", "--pin-fit"].forEach((k) => this.pin.style.removeProperty(k));
+      this.engaged = false;
       this.setMode("auto");
     };
 
     const measure = () => {
-      // 휴대폰: 스크롤 고정 없이 자동 넘김 + 좌우 스와이프
-      if (mobile.matches) {
+      if (!desktop.matches) {
         unpin();
         return;
       }
@@ -105,54 +112,42 @@ class FeatureCarousel {
       const h = this.root.offsetHeight;
       const fit = Math.min(1, (vh - topbar - 24) / h); // 화면이 낮으면 안쪽 내용 축소 비율
 
-      if (fit >= 0.6) {
-        const visualH = Math.round(h * fit);
-        this.step = Math.max(240, Math.round(vh * 0.5)); // 슬라이드 1장당 스크롤 거리
-        const top = Math.round(topbar + (vh - topbar - visualH) / 2); // 상단 바 아래 남은 화면의 세로 가운데
-        this.pin.style.setProperty("--pin-h", `${visualH + this.step * this.slides.length}px`);
-        this.pin.style.setProperty("--pin-top", `${top}px`);
-        if (fit < 1) {
-          this.pin.style.setProperty("--pin-vh", `${visualH}px`);
-          this.pin.style.setProperty("--pin-fit", fit.toFixed(4));
-        }
-        this.setMode("scroll");
-        this.onScroll();
-      } else {
+      if (fit < 0.6) {
         unpin();
+        return;
       }
-    };
-
-    let raf = 0;
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        this.onScroll();
-      });
+      this.visualH = Math.round(h * fit);
+      this.targetTop = Math.round(topbar + (vh - topbar - this.visualH) / 2); // 상단 바 아래 남은 화면의 세로 가운데
+      if (fit < 1) {
+        this.pin.style.setProperty("--pin-vh", `${this.visualH}px`);
+        this.pin.style.setProperty("--pin-fit", fit.toFixed(4));
+      }
+      this.setMode("lock");
     };
 
     let resizeTimer;
     let lastW = window.innerWidth;
     let lastH = window.innerHeight;
     window.addEventListener("resize", () => {
-      // 모바일 주소창이 접히는 정도의 작은 높이 변화는 무시
       if (window.innerWidth === lastW && Math.abs(window.innerHeight - lastH) < 120) return;
       lastW = window.innerWidth;
       lastH = window.innerHeight;
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(measure, 150);
     });
-    window.addEventListener("scroll", onScroll, { passive: true });
-    mobile.addEventListener?.("change", measure);
+    desktop.addEventListener?.("change", measure);
     if (document.fonts?.ready) document.fonts.ready.then(measure);
+
+    window.addEventListener("wheel", (e) => this.onWheel(e), { passive: false });
+    window.addEventListener("keydown", (e) => this.onPageKey(e));
     measure();
   }
 
   setMode(mode) {
     if (this.mode === mode) return;
     this.mode = mode;
-    this.root.classList.toggle("is-scroll", mode === "scroll");
-    if (mode === "scroll") {
+    this.root.classList.toggle("is-lock", mode === "lock");
+    if (mode === "lock") {
       clearTimeout(this.timer);
       this.startedAt = 0;
       this.root.classList.remove("is-playing", "is-paused");
@@ -161,34 +156,106 @@ class FeatureCarousel {
     }
   }
 
-  /** 래퍼 안에서 얼마나 스크롤했는지로 슬라이드를 고릅니다 */
-  progress() {
-    const top = parseFloat(this.pin.style.getPropertyValue("--pin-top")) || 0;
-    const scrolled = top - this.pin.getBoundingClientRect().top;
-    const n = this.slides.length;
-    return Math.min(n - 0.0001, Math.max(0, scrolled / this.step));
+  /** 캐러셀이 가운데 자리에서 얼마나 떨어져 있는지 (양수: 아직 아래, 음수: 지나쳐 위) */
+  offsetFromTarget() {
+    return this.root.getBoundingClientRect().top - this.targetTop;
   }
 
-  onScroll() {
-    if (this.mode !== "scroll" || !this.step) return;
-    const p = this.progress();
-    const i = Math.floor(p);
-    this.root.style.setProperty("--p", (p - i).toFixed(3));
-    if (i !== this.index) this.go(i);
+  canAdvance(dir) {
+    return dir > 0 ? this.index < this.slides.length - 1 : this.index > 0;
   }
 
-  /** 사용자가 고른 슬라이드로 이동 (스크롤 모드면 해당 위치로 화면을 스크롤) */
+  /**
+   * 휠 한 번(또는 트랙패드 한 번 쓸기) → 슬라이드 한 장.
+   * 넘길 장이 남아 있는 동안만 페이지 스크롤을 막습니다.
+   * 트랙패드는 한 번 쓸어도 관성으로 휠 이벤트가 1~2초 이어지므로,
+   * 한 장 넘긴 뒤에는 휠이 잠깐 멈추거나(새 동작) 다시 세게 굴릴 때까지 들어오는 이벤트를 삼킵니다.
+   */
+  onWheel(e) {
+    if (this.mode !== "lock" || e.ctrlKey) return; // ctrl + 휠은 브라우저 확대/축소
+    let dy = e.deltaY;
+    if (e.deltaMode === 1) dy *= 16;
+    else if (e.deltaMode === 2) dy *= window.innerHeight;
+    if (!dy || Math.abs(e.deltaX) > Math.abs(dy)) return;
+
+    const now = performance.now();
+    const gap = now - (this.lastWheelAt || 0);
+    const abs = Math.abs(dy);
+    const accelerating = abs > (this.lastAbs || 0) * 1.6 && abs > 20;
+    this.lastWheelAt = now;
+    this.lastAbs = abs;
+
+    const dir = dy > 0 ? 1 : -1;
+    const offset = this.offsetFromTarget();
+    const range = this.visualH * 0.5;
+
+    // 한 장 넘긴 직후: 같은 동작(관성)이 이어지는 동안은 삼킴
+    if (this.engaged && this.settling) {
+      const newGesture = gap > 160 || (accelerating && now - this.lastStepAt > 450);
+      if (!newGesture) {
+        e.preventDefault();
+        return;
+      }
+      this.settling = false;
+    }
+
+    // 다른 방법(스크롤바 드래그 등)으로 멀리 벗어났으면 잠금 해제
+    if (this.engaged && Math.abs(offset) > range) this.engaged = false;
+
+    if (!this.canAdvance(dir)) {
+      this.engaged = false; // 끝까지 봤으면 평소처럼 스크롤
+      this.wheelSum = 0;
+      return;
+    }
+
+    if (!this.engaged) {
+      // 내려가는 중: 캐러셀이 가운데 자리에 도착했거나 막 지나쳤을 때 / 올라가는 중: 그 반대
+      const arrived = dir > 0 ? offset <= 0 && offset > -range : offset >= 0 && offset < range;
+      if (!arrived) return;
+      e.preventDefault();
+      this.engaged = true;
+      this.settling = true; // 자리를 맞추는 이번 동작에서는 넘기지 않음
+      this.wheelSum = 0;
+      this.lastStepAt = now;
+      if (Math.abs(offset) > 1) {
+        window.scrollTo({ top: window.scrollY + offset, behavior: this.reduced ? "auto" : "smooth" });
+      }
+      return;
+    }
+
+    e.preventDefault();
+    if (now - this.lastStepAt < 450) return; // 너무 빠른 연속 넘김 방지
+    if (Math.sign(this.wheelSum) !== dir) this.wheelSum = 0;
+    this.wheelSum += dy;
+    if (Math.abs(this.wheelSum) >= 30) {
+      this.wheelSum = 0;
+      this.lastStepAt = now;
+      this.settling = true;
+      this.go(this.index + dir);
+    }
+  }
+
+  /** 잠금 중에는 ↓ / PageDown / 스페이스 · ↑ / PageUp 도 슬라이드를 넘깁니다 */
+  onPageKey(e) {
+    if (this.mode !== "lock" || !this.engaged || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.target.closest?.("input, select, textarea, button, a, [contenteditable]")) return;
+    const down = ["ArrowDown", "PageDown", " "].includes(e.key) && !e.shiftKey;
+    const up = ["ArrowUp", "PageUp"].includes(e.key) || (e.key === " " && e.shiftKey);
+    if (!down && !up) return;
+    const dir = down ? 1 : -1;
+    if (Math.abs(this.offsetFromTarget()) > 4 || !this.canAdvance(dir)) {
+      this.engaged = false;
+      return;
+    }
+    e.preventDefault();
+    this.go(this.index + dir);
+  }
+
+  /** 사용자가 고른 슬라이드로 이동 (인디케이터, 스와이프, ←/→) */
   request(i) {
     const n = this.slides.length;
-    const target = Math.max(0, Math.min(n - 1, i));
-    if (this.mode === "scroll") {
-      const top = parseFloat(this.pin.style.getPropertyValue("--pin-top")) || 0;
-      const pinStart = window.scrollY + this.pin.getBoundingClientRect().top - top;
-      window.scrollTo({ top: pinStart + target * this.step + 2, behavior: this.reduced ? "auto" : "smooth" });
-      this.go(this.index); // 드래그로 밀린 위치 되돌리기
-    } else {
-      this.go((i + n) % n, { user: true });
-    }
+    if (this.mode === "lock") this.go(Math.max(0, Math.min(n - 1, i)));
+    else this.go((i + n) % n, { user: true });
   }
 
   /* =========================================================
