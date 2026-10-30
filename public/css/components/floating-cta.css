@@ -1,5 +1,5 @@
 /* =========================================================
-   하단 고정 상담 버튼 — 히어로를 지나면 나타나고, 신청 폼이 보이면 숨습니다.
+   하단 고정 상담 버튼 (배경 없이 버튼만) — 히어로를 지나면 나타나고, 신청 폼이 보이면 숨습니다.
    ========================================================= */
 .floating-cta {
   position: fixed;
@@ -7,27 +7,18 @@
   right: 0;
   bottom: 0;
   z-index: var(--z-cta);
-  padding: 22px var(--gutter) calc(12px + env(safe-area-inset-bottom));
-  translate: 0 110%;
+  padding: 0 var(--gutter) calc(14px + env(safe-area-inset-bottom));
+  translate: 0 130%;
   transition: translate 0.45s var(--ease-out);
   pointer-events: none;
 }
 
-/* 버튼 뒤 흐린 배경: 화면 좌우 끝까지, 위로 갈수록 자연스럽게 사라짐 */
-.floating-cta::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(to top, rgb(250 250 251 / 0.9) 45%, rgb(250 250 251 / 0.55) 75%, rgb(250 250 251 / 0));
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  -webkit-mask-image: linear-gradient(to top, #000 55%, transparent);
-  mask-image: linear-gradient(to top, #000 55%, transparent);
-}
-
 .floating-cta.is-show {
   translate: 0 0;
+}
+
+/* 투명한 양옆 영역은 아래 페이지 클릭을 막지 않도록, 클릭은 버튼에서만 받습니다 */
+.floating-cta.is-show .floating-cta__btn {
   pointer-events: auto;
 }
 
