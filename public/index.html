@@ -435,21 +435,18 @@
                   </div>
                   <div class="fc__media fc__media--video" style="--x: 113; --w: 674">
                     <img
-                      src="assets/images/features/slide-2-customer-poster.webp"
+                      src="assets/images/features/slide-2-customer-poster.webp?v=4"
                       width="1348"
                       height="670"
                       alt="결제 화면에서 할인과 포인트를 적용하는 모습"
                       loading="lazy"
                       draggable="false"
                     />
-                    <video
-                      muted
-                      playsinline
-                      loop
-                      preload="none"
-                      data-src="assets/videos/place-pos-pay-process-2.mp4"
-                      aria-hidden="true"
-                    ></video>
+                    <!-- 영상 파일을 바꾸면 ?v= 숫자를 하나 올려주세요 (브라우저에 남은 예전 파일 대신 새 파일을 받게 됩니다) -->
+                    <video muted playsinline loop preload="none" aria-hidden="true">
+                      <source data-src="assets/videos/place-pos-pay-process-2.mp4?v=4" type="video/mp4" />
+                      <source data-src="assets/videos/place-pos-pay-process-2.webm?v=4" type="video/webm" />
+                    </video>
                   </div>
                 </article>
 

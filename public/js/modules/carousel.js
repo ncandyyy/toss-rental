@@ -16,6 +16,34 @@ export function initCarousels(root = document) {
   root.querySelectorAll("[data-carousel]").forEach((el) => new FeatureCarousel(el));
 }
 
+/**
+ * <video> 안의 <source data-src> 를 실제 주소로 바꿔 불러옵니다. (mp4 → 안 되면 webm 순서)
+ * 실패해도 영상 태그는 남겨두고(첫 장면 이미지가 계속 보임) 콘솔에 원인을 남깁니다.
+ */
+function loadVideo(video) {
+  video.dataset.loaded = "1";
+  video.addEventListener("playing", () => video.classList.add("is-playing"));
+
+  const sources = [...video.querySelectorAll("source[data-src]")];
+  sources.forEach((source) => {
+    source.addEventListener("error", () => console.warn("[carousel] 영상을 불러오지 못했어요:", source.dataset.src));
+  });
+  const markFailed = () => {
+    video.dataset.failed = "1";
+  };
+  if (sources.length) {
+    sources[sources.length - 1].addEventListener("error", markFailed); // 모든 후보가 실패
+    sources.forEach((source) => {
+      source.src = source.dataset.src;
+    });
+  } else if (video.dataset.src) {
+    video.addEventListener("error", markFailed);
+    video.src = video.dataset.src;
+  }
+  video.preload = "auto";
+  video.load();
+}
+
 class FeatureCarousel {
   constructor(root) {
     this.root = root;
@@ -232,14 +260,9 @@ class FeatureCarousel {
       if (!video) return;
 
       // 캐러셀이 화면에 들어오면 미리 받아둬서, 해당 슬라이드에 오자마자 바로 재생되게
-      if (this.inView && !video.src && video.dataset.src) {
-        video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true });
-        video.addEventListener("error", () => video.remove(), { once: true });
-        video.preload = "auto";
-        video.src = video.dataset.src;
-      }
+      if (this.inView && !video.dataset.loaded) loadVideo(video);
 
-      const shouldPlay = k === this.index && this.inView && !document.hidden;
+      const shouldPlay = k === this.index && this.inView && !document.hidden && !video.dataset.failed;
       if (shouldPlay) {
         if (changed && video.currentTime > 0) video.currentTime = 0; // 슬라이드에 들어올 때 처음부터
         const p = video.play();
