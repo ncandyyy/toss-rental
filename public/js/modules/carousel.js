@@ -2,9 +2,9 @@
  * 기능 소개 캐러셀 (어두운 슬라이드)
  *
  * 두 가지 모드로 동작합니다.
- * 1) 스크롤 모드 (기본): [data-carousel-pin] 래퍼 안에서 캐러셀이 화면에 고정되고,
+ * 1) 스크롤 모드 (기본): [data-carousel-pin] 래퍼 안에서 캐러셀이 화면 전체(위아래·양옆)를 채운 채 고정되고,
  *    스크롤을 내리는 만큼 슬라이드가 1→4로 넘어갑니다. 4장을 다 보면 다음 섹션으로 내려갑니다.
- * 2) 자동 넘김 모드: 화면 높이가 캐러셀보다 작으면 고정 대신 일정 간격으로 자동 넘김.
+ * 2) 자동 넘김 모드: 화면 높이가 아주 낮으면(가로로 눕힌 휴대폰 등) 고정 대신 일정 간격으로 자동 넘김.
  *
  * 공통: 오른쪽 인디케이터 클릭, 좌우 스와이프, 키보드 ←/→,
  *       슬라이드 안 <video data-src> 는 해당 슬라이드가 보일 때만 재생.
@@ -52,20 +52,12 @@ class FeatureCarousel {
 
     const measure = () => {
       const vh = window.innerHeight;
-      const topbar = document.querySelector(".topbar")?.offsetHeight || 0;
-      const h = this.root.offsetHeight; // transform(축소)과 무관한 원래 높이
-      const avail = vh - topbar - 24;
-      // 화면이 낮으면 캐러셀을 화면에 맞게 줄여서라도 고정 (60% 미만이면 자동 넘김으로)
-      const fit = Math.min(1, avail / h);
 
-      if (fit >= 0.6) {
-        const visualH = h * fit;
-        this.step = Math.max(240, Math.round(vh * 0.5)); // 슬라이드 1장당 스크롤 거리
-        const top = Math.round(topbar + (vh - topbar - visualH) / 2); // 남은 화면의 세로 가운데
-        this.pin.style.setProperty("--pin-h", `${h + this.step * this.slides.length}px`);
-        this.pin.style.setProperty("--pin-top", `${top}px`);
-        this.pin.style.setProperty("--pin-fit", fit.toFixed(4));
-        this.pin.style.setProperty("--pin-gap", `${-(h - visualH).toFixed(1)}px`);
+      if (vh >= 460) {
+        // 캐러셀이 화면 전체 높이(vh)를 채우므로, 래퍼 높이 = 화면 높이 + 슬라이드 수 × 1장당 스크롤 거리
+        this.step = Math.max(240, Math.round(vh * 0.5));
+        this.pin.style.setProperty("--pin-h", `${vh + this.step * this.slides.length}px`);
+        this.pin.style.setProperty("--pin-top", "0px");
         this.pin.classList.add("is-pinned");
         this.setMode("scroll");
         this.onScroll();
@@ -225,13 +217,17 @@ class FeatureCarousel {
     this.slides.forEach((slide, k) => {
       const video = slide.querySelector("video");
       if (!video) return;
+
+      // 캐러셀이 화면에 들어오면 미리 받아둬서, 해당 슬라이드에 오자마자 바로 재생되게
+      if (this.inView && !video.src && video.dataset.src) {
+        video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true });
+        video.addEventListener("error", () => video.remove(), { once: true });
+        video.preload = "auto";
+        video.src = video.dataset.src;
+      }
+
       const shouldPlay = k === this.index && this.inView && !document.hidden;
       if (shouldPlay) {
-        if (!video.src && video.dataset.src) {
-          video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true });
-          video.addEventListener("error", () => video.remove(), { once: true });
-          video.src = video.dataset.src;
-        }
         if (changed && video.currentTime > 0) video.currentTime = 0; // 슬라이드에 들어올 때 처음부터
         const p = video.play();
         if (p && p.catch) p.catch(() => {});

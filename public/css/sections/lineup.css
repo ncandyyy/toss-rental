@@ -64,9 +64,10 @@
   height: auto;
 }
 
-/* ---------- 기능 캐러셀 (스크롤 고정) ----------
-   .is-pinned 일 때 래퍼 높이만큼 스크롤하는 동안 캐러셀이 화면에 붙어 있습니다.
-   높이(--pin-h)와 고정 위치(--pin-top)는 carousel.js 가 화면 크기에 맞춰 계산합니다. */
+/* ---------- 기능 캐러셀 (스크롤 고정 · 전체 화면) ----------
+   .is-pinned 일 때 캐러셀이 화면 위아래·양옆을 꽉 채운 채 고정되고,
+   래퍼 높이(--pin-h, carousel.js 가 계산)만큼 스크롤하는 동안 슬라이드가 넘어갑니다.
+   슬라이드 안 글/이미지는 가운데 860px 칼럼 기준으로 배치됩니다. */
 .fc-pin {
   position: relative;
   margin-top: max(48px, calc(81 * var(--u)));
@@ -74,14 +75,53 @@
 
 .fc-pin.is-pinned {
   height: var(--pin-h);
-  margin-bottom: var(--pin-gap, 0px); /* 축소된 만큼 생기는 빈 공간 제거 */
 }
 
 .fc-pin.is-pinned .fc {
   position: sticky;
-  top: var(--pin-top, 0px);
-  transform: scale(var(--pin-fit, 1));
-  transform-origin: 50% 0;
+  top: 0;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  height: 100vh;
+  height: 100dvh;
+  border-radius: 0;
+}
+
+.fc-pin.is-pinned .fc__viewport,
+.fc-pin.is-pinned .fc__track {
+  height: 100%;
+}
+
+.fc-pin.is-pinned .fc__slide {
+  min-height: 0;
+  height: 100%;
+  padding-top: var(--topbar-h); /* 상단 바 아래부터 */
+  padding-inline: max(0px, calc((100% - var(--container)) / 2));
+}
+
+/* 이미지 위 남은 공간의 세로 가운데에 글 배치 */
+.fc-pin.is-pinned .fc__text {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 24px;
+}
+
+.fc-pin.is-pinned .fc__pager {
+  top: calc(var(--topbar-h) + (100% - var(--topbar-h)) * 0.4);
+  right: calc(max(0px, (100% - var(--container)) / 2) + max(20px, calc(73 * var(--u))));
+  transform: translateY(-50%);
+}
+
+/* 휴대폰: 이미지를 키워서(오른쪽 끝은 그대로, 왼쪽으로 확장) 화면을 더 채웁니다 */
+@media (max-width: 599px) {
+  .fc-pin.is-pinned .fc__media {
+    --k: min(1.6, calc((var(--x) + var(--w) - 40) / var(--w)));
+    width: calc(var(--w) * var(--k) * var(--u));
+    margin-left: calc((var(--x) + var(--w) * (1 - var(--k))) * var(--u));
+  }
 }
 
 /* ---------- 토스 프론트 ---------- */
