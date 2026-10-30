@@ -1,0 +1,19 @@
+# Netlify 배포 설정
+# 빌드 과정 없이 public 폴더를 그대로 올립니다.
+[build]
+  publish = "public"
+  command = ""
+
+# 보안 헤더
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# 이미지/아이콘/영상은 7일 캐시 (같은 파일명으로 교체하면 최대 7일간 이전 이미지가 보일 수 있어요)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

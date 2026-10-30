@@ -1,0 +1,22 @@
+/* =========================================================
+   Footer — 사업자 정보는 config.js 가 아니라 여기 HTML에서 직접 수정하세요.
+   ========================================================= */
+.footer {
+  padding: 32px var(--gutter) calc(110px + env(safe-area-inset-bottom));
+  background: var(--grey-100);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--grey-500);
+  text-align: center;
+}
+
+.footer__brand {
+  width: 96px;
+  height: auto;
+  margin: 0 auto 10px;
+  opacity: 0.6;
+}
+
+.footer strong {
+  color: var(--grey-600);
+}

@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>페이앤밴 무상 렌탈 | 월 이용료 0원 · 폐업 시 위약금 0원</title>
+    <meta
+      name="description"
+      content="잘 되면 계속 쓰고, 안되면 반납하고 끝. 토스 포스·프론트·터미널을 월 이용료 0원, 폐업 시 위약금 0원으로 무상 렌탈하세요. 지금 상담 신청하세요."
+    />
+    <meta name="theme-color" content="#191f28" />
+    <link rel="canonical" href="/" />
+
+    <!-- 공유 미리보기 (카카오톡/페이스북 등)
+         TODO: 도메인이 정해지면 og:image 를 https://도메인/assets/images/og/og-image.png 처럼 전체 주소로 바꿔주세요 -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="페이앤밴" />
+    <meta property="og:title" content="잘 되면 계속 쓰고, 안되면 반납하고 끝 | 페이앤밴 무상 렌탈" />
+    <meta property="og:description" content="월 이용료 0원 · 폐업 시 위약금 0원 · 보유 태블릿 활용. 토스 결제 기기 3종 무상 렌탈 상담" />
+    <meta property="og:image" content="/assets/images/og/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml" />
+
+    <!-- 폰트: Pretendard (가변, 필요한 글자만 내려받는 dynamic subset) -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+
+    <!-- 첫 화면 이미지 미리 받기 -->
+    <link rel="preload" as="image" href="assets/images/devices/tablet.webp" fetchpriority="high" />
+
+    <!-- JS가 켜져 있으면 등장 애니메이션을 위해 .js 클래스를 붙입니다 -->
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+
+    <!-- styles: base → components → sections -->
+    <link rel="stylesheet" href="css/base/tokens.css" />
+    <link rel="stylesheet" href="css/base/reset.css" />
+    <link rel="stylesheet" href="css/base/base.css" />
+    <link rel="stylesheet" href="css/components/chips.css" />
+    <link rel="stylesheet" href="css/components/marquee.css" />
+    <link rel="stylesheet" href="css/components/carousel.css" />
+    <link rel="stylesheet" href="css/components/form.css" />
+    <link rel="stylesheet" href="css/components/floating-cta.css" />
+    <link rel="stylesheet" href="css/sections/topbar.css" />
+    <link rel="stylesheet" href="css/sections/hero.css" />
+    <link rel="stylesheet" href="css/sections/worry.css" />
+    <link rel="stylesheet" href="css/sections/reasons.css" />
+    <link rel="stylesheet" href="css/sections/lineup.css" />
+    <link rel="stylesheet" href="css/sections/apply.css" />
+    <link rel="stylesheet" href="css/sections/footer.css" />
+
+    <script type="module" src="js/main.js"></script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#apply">상담 신청 바로가기</a>
+
+    <!-- 공용 아이콘 (그라데이션 체크) -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="g-check-a" x1="12" y1="2" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#3182F6" />
+          <stop offset="1" stop-color="#90C2FF" />
+        </linearGradient>
+        <linearGradient id="g-check-b" x1="15.5" y1="4" x2="15.5" y2="14" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#3182F6" />
+          <stop offset="1" stop-color="#90C2FF" />
+        </linearGradient>
+        <symbol id="i-check-blue" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M22 11.08V12a10 10 0 1 1-5.93-9.14"
+            stroke="url(#g-check-a)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path d="M22 4 12 14.01l-3-3" stroke="url(#g-check-b)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <!-- ===================== 상단 플로팅 바 ===================== -->
+    <header class="topbar">
+      <div class="topbar__inner">
+        <p class="topbar__text">
+          지금 <strong class="topbar__count"><span data-count-up="24">24</span>명</strong>의 사장님이 관심있게 보고 있어요
+        </p>
+        <img class="topbar__fire" src="assets/icons/fire.svg" alt="" width="30" height="30" />
+      </div>
+    </header>
+
+    <main>
+      <!-- ===================== 00 히어로 ===================== -->
+      <section class="hero section" id="hero" aria-labelledby="hero-title">
+        <div class="container hero__inner">
+          <div class="hero__tooltip-wrap">
+            <p class="tooltip" data-reveal="pop">장사는 해봐야 아는거니까</p>
+          </div>
+
+          <h1 class="hero__title" id="hero-title">
+            <span class="hero__line" data-reveal style="--delay: 0.1s">잘 되면 계속 쓰고</span>
+            <span class="hero__line hero__line--marker" data-reveal style="--delay: 0.2s">안되면 반납하고 끝</span>
+          </h1>
+
+          <ul class="hero__pills" aria-label="주요 혜택">
+            <li class="hero__pill" style="--cx: 204.5; --cy: 65.6; --bob: -0.6s">
+              <span class="pill" data-reveal="pop" style="--delay: 0.55s">월 이용료 0원</span>
+            </li>
+            <li class="hero__pill hero__pill--top" style="--cx: 426.5; --cy: 46.6; --r: 3.13deg; --bob: -2.1s">
+              <span class="pill pill--glow-top" data-reveal="pop" style="--delay: 0.7s">폐업시 위약금 0원</span>
+            </li>
+            <li class="hero__pill" style="--cx: 636.5; --cy: 73.6; --bob: -3.4s">
+              <span class="pill" data-reveal="pop" style="--delay: 0.85s">보유 태블릿 활용</span>
+            </li>
+          </ul>
+
+          <!-- 피그마 y=515 기준 무대: --x / --y / --w 는 디자인 px -->
+          <div class="hero__stage stage">
+            <img
+              class="hero__device at"
+              style="--x: -35; --y: 38; --w: 810; --delay: 0.35s"
+              src="assets/images/devices/tablet.webp"
+              width="1197"
+              height="801"
+              alt="토스 포스가 실행 중인 태블릿"
+              fetchpriority="high"
+              data-reveal
+            />
+            <img
+              class="hero__device at"
+              style="--x: 54; --y: 140; --w: 1094; --delay: 0.5s"
+              src="assets/images/devices/front.webp"
+              width="1601"
+              height="802"
+              alt="고객용 결제 단말기 토스 프론트"
+              data-reveal
+            />
+            <img
+              class="hero__device at"
+              style="--x: -144; --y: 166; --w: 745; --delay: 0.65s"
+              src="assets/images/devices/terminal.webp"
+              width="1201"
+              height="800"
+              alt="영수증 프린터가 달린 토스 터미널"
+              data-reveal
+            />
+
+            <div class="glass-label hero__label at" style="--x: 132; --y: 56; --delay: 0.9s; --bob: -1s" data-reveal>
+              <p class="glass-label__title">토스 포스</p>
+              <p class="glass-label__desc">모든 기기 지원 앱</p>
+            </div>
+            <div class="glass-label hero__label at" style="--x: 565; --y: 468; --delay: 1.05s; --bob: -2.5s" data-reveal>
+              <p class="glass-label__title">토스 프론트</p>
+              <p class="glass-label__desc">고객이 보는 단말기</p>
+            </div>
+            <div class="glass-label hero__label at" style="--x: 82; --y: 485; --delay: 1.2s; --bob: -3.7s" data-reveal>
+              <p class="glass-label__title">토스 터미널</p>
+              <p class="glass-label__desc">영수증 프린터</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 01 고민 → 해결 ===================== -->
+      <section class="worry section" aria-labelledby="worry-title">
+        <div class="container">
+          <div class="worry__rain" aria-hidden="true">
+            <i style="--x: 48; --y: -42; --t: 6s; --d: -1s"></i>
+            <i style="--x: 84; --y: -130; --t: 7.5s; --d: -3s"></i>
+            <i style="--x: 120; --y: -100; --t: 5.5s; --d: -2s"></i>
+            <i style="--x: 712; --y: -162; --t: 7s; --d: -4s"></i>
+            <i style="--x: 753; --y: -69; --t: 6.5s; --d: -0.5s"></i>
+            <i style="--x: 783; --y: -138; --t: 8s; --d: -2.5s"></i>
+            <i style="--x: 813; --y: -4; --t: 6s; --d: -5s"></i>
+          </div>
+
+          <div class="worry__inner">
+            <h2 class="worry__title" id="worry-title" data-reveal>결제 기기 알아보고 계신데<br />이런 생각 자꾸 드셨죠?</h2>
+
+            <!-- 고민 버블: --cx/--cy 는 버블 중심, 이모지 --dx/--dy 는 버블 끝 기준 -->
+            <ul class="worry__bubbles">
+              <li class="worry__bubble" style="--cx: 474.2; --cy: 72.1; --r: -3.94deg; --z: 1">
+                <p class="bubble" data-reveal="pop" style="--delay: 0.1s">싸게 샀다 쳐도, 가게 접으면 이 기계는 어떡해요?</p>
+                <img
+                  class="worry__emoji"
+                  src="assets/icons/emoji-sad.svg"
+                  alt=""
+                  width="89"
+                  height="89"
+                  style="--dx: -6.8; --dy: -39; --s: 88.3; --delay: 0.35s; --wob: 0.4s"
+                  data-reveal="pop"
+                />
+              </li>
+              <li class="worry__bubble" style="--cx: 386; --cy: 161.7; --r: 3.56deg; --z: 2">
+                <p class="bubble" data-reveal="pop" style="--delay: 0.3s">매달 빠져나가는 렌탈료가 은근히 신경 쓰여요.</p>
+                <img
+                  class="worry__emoji worry__emoji--end"
+                  src="assets/icons/emoji-eyes.svg"
+                  alt=""
+                  width="59"
+                  height="59"
+                  style="--dx: -5.1; --dy: -30.7; --s: 59; --delay: 0.55s; --wob: 1.1s"
+                  data-reveal="pop"
+                />
+                <img
+                  class="worry__emoji worry__emoji--end"
+                  src="assets/icons/emoji-sweat.svg"
+                  alt=""
+                  width="44"
+                  height="44"
+                  style="--dx: 42.4; --dy: -32.2; --s: 44; --delay: 0.65s; --wob: 1.6s"
+                  data-reveal="pop"
+                />
+              </li>
+              <li class="worry__bubble" style="--cx: 446.7; --cy: 243.6; --r: -0.82deg; --z: 3">
+                <p class="bubble" data-reveal="pop" style="--delay: 0.5s">약정 중간에 그만두면 위약금이 더 무섭더라고요.</p>
+                <img
+                  class="worry__emoji"
+                  src="assets/icons/emoji-scream.svg"
+                  alt=""
+                  width="87"
+                  height="87"
+                  style="--dx: -10.5; --dy: -18.6; --s: 86.2; --delay: 0.75s; --wob: 2s"
+                  data-reveal="pop"
+                />
+              </li>
+            </ul>
+
+            <!-- 해결 카드 -->
+            <div class="solution" data-reveal>
+              <p class="solution__eyebrow">사면 짐이 되고, 빌리면 발이 묶이고</p>
+              <h2 class="solution__title">그래서 <span class="text-grad-paydv">페이앤밴</span>이 준비했어요!</h2>
+
+              <div class="solution__boxes">
+                <div class="zero-box" data-reveal="pop" style="--delay: 0.15s">
+                  <p class="zero-box__label">월 이용료</p>
+                  <p class="zero-box__value" aria-label="0원">
+                    <span class="roll" aria-hidden="true"
+                      ><span class="roll__col"
+                        ><span class="grad-zero">9</span><span class="grad-zero">4</span><span class="grad-zero">7</span
+                        ><span class="grad-zero">2</span><span class="grad-zero">8</span><span class="grad-zero">5</span
+                        ><span class="grad-zero">1</span><span class="grad-zero">6</span><span class="grad-zero">3</span
+                        ><span class="grad-zero">0</span></span
+                      ></span
+                    ><span class="grad-zero" aria-hidden="true">원</span>
+                  </p>
+                </div>
+                <div class="zero-box" data-reveal="pop" style="--delay: 0.3s">
+                  <p class="zero-box__label">폐업 시 위약금</p>
+                  <p class="zero-box__value" aria-label="0원">
+                    <span class="roll" aria-hidden="true"
+                      ><span class="roll__col" style="--delay: 0.45s"
+                        ><span class="grad-zero">8</span><span class="grad-zero">3</span><span class="grad-zero">6</span
+                        ><span class="grad-zero">9</span><span class="grad-zero">1</span><span class="grad-zero">5</span
+                        ><span class="grad-zero">7</span><span class="grad-zero">2</span><span class="grad-zero">4</span
+                        ><span class="grad-zero">0</span></span
+                      ></span
+                    ><span class="grad-zero" aria-hidden="true">원</span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="solution__devices" aria-hidden="true">
+                <img
+                  class="at"
+                  style="--x: 72; --y: 0; --w: 672; --delay: 0.2s"
+                  src="assets/images/devices/tablet.webp"
+                  width="1197"
+                  height="801"
+                  alt=""
+                  loading="lazy"
+                  data-reveal
+                />
+                <img
+                  class="at"
+                  style="--x: -69; --y: 85; --w: 658.5; --delay: 0.35s"
+                  src="assets/images/devices/terminal.webp"
+                  width="1201"
+                  height="800"
+                  alt=""
+                  loading="lazy"
+                  data-reveal
+                />
+                <img
+                  class="at"
+                  style="--x: 125; --y: 84; --w: 892; --delay: 0.5s"
+                  src="assets/images/devices/front.webp"
+                  width="1601"
+                  height="802"
+                  alt=""
+                  loading="lazy"
+                  data-reveal
+                />
+              </div>
+            </div>
+
+            <p class="footnote worry__footnote">※위약금 면제는 폐업 시에만 적용, 단순 변심으로 인한 해지 시 해당 안됨</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 02 선택한 이유 ===================== -->
+      <section class="reasons section" aria-labelledby="reasons-title">
+        <div class="container">
+          <h2 class="reasons__title" id="reasons-title" data-reveal>
+            <span class="text-grad-blue">2,000명이 넘는 대표님</span>들이<br />페이앤밴을 선택한 이유
+          </h2>
+          <p class="footnote reasons__note" data-reveal style="--delay: 0.1s">※25.10월 ~26.10월 장비 설치건 집계 결과</p>
+        </div>
+
+        <!-- 자동 캐러셀: 아이템은 JS가 자동으로 복제합니다. 카드 추가/삭제는 li 만 고치면 됩니다 -->
+        <div class="reasons__rows" data-reveal="fade" style="--delay: 0.2s">
+          <div class="marquee" data-marquee data-direction="left" data-speed="42" data-hover-pause>
+            <ul class="marquee__track">
+              <li class="reason-card">
+                <span class="reason-card__icon"><img src="assets/icons/emoji-card.svg" alt="" width="58" height="69" style="--s: 57.2" /></span>
+                <span class="reason-card__text">
+                  <span class="reason-card__label">카드사 가맹</span>
+                  <strong class="reason-card__value">가입비 0원</strong>
+                </span>
+              </li>
+              <li class="reason-card">
+                <span class="reason-card__icon"><img src="assets/icons/emoji-receipt.svg" alt="" width="73" height="73" style="--s: 73" /></span>
+                <span class="reason-card__text">
+                  <span class="reason-card__label">영수증 용지</span>
+                  <strong class="reason-card__value">무료 지원</strong>
+                </span>
+              </li>
+              <li class="reason-card">
+                <span class="reason-card__icon"><img src="assets/icons/emoji-sparkle.svg" alt="" width="64" height="64" style="--s: 64" /></span>
+                <span class="reason-card__text">
+                  <span class="reason-card__label">장비 불량</span>
+                  <strong class="reason-card__value">신품 교환</strong>
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="marquee" data-marquee data-direction="right" data-speed="42" data-start="0.35" data-hover-pause>
+            <ul class="marquee__track">
+              <li class="reason-card">
+                <span class="reason-card__icon"><img src="assets/icons/emoji-tools.svg" alt="" width="75" height="75" style="--s: 75" /></span>
+                <span class="reason-card__text">
+                  <span class="reason-card__label">단말기 고장</span>
+                  <strong class="reason-card__value">즉시 보수</strong>
+                </span>
+              </li>
+              <li class="reason-card">
+                <span class="reason-card__icon"><img src="assets/icons/emoji-woman.svg" alt="" width="69" height="69" style="--s: 69" /></span>
+                <span class="reason-card__text">
+                  <span class="reason-card__label">상담 운영</span>
+                  <strong class="reason-card__value">밤 10시 까지</strong>
+                </span>
+              </li>
+              <li class="reason-card">
+                <span class="reason-card__icon"><img src="assets/icons/emoji-money.svg" alt="" width="63" height="63" style="--s: 63" /></span>
+                <span class="reason-card__text">
+                  <span class="reason-card__label">부가세 신고</span>
+                  <strong class="reason-card__value">자료 제공</strong>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 03 기기 라인업 ===================== -->
+      <section class="lineup section" id="lineup" aria-labelledby="lineup-title">
+        <div class="container">
+          <p class="lineup__eyebrow" data-reveal>이 세트만 있으면 결제는 걱정없죠</p>
+          <h2 class="lineup__title" id="lineup-title" data-reveal style="--delay: 0.1s">
+            <span class="text-grad-blue">대표님들 걱정을 덜어줄<br />가벼운 무상 렌탈 기기</span>
+          </h2>
+
+          <!-- 토스 포스 -->
+          <article class="feature-pos">
+            <div data-reveal>
+              <h3 class="feature__title"><em>토스 포스</em>로 어디서든 간편하게</h3>
+              <p class="feature__desc">매출관리부터 리뷰까지 포스 프로그램 하나로<br />기기 상관없이 어디서든 매장을 관리해요</p>
+            </div>
+            <img
+              class="feature-pos__img"
+              src="assets/images/features/pos-to-mobile.webp"
+              width="807"
+              height="594"
+              alt="태블릿 포스와 휴대폰에서 같은 매장을 관리하는 화면"
+              loading="lazy"
+              data-reveal
+              style="--delay: 0.15s"
+            />
+          </article>
+
+          <!-- 기능 캐러셀: 슬라이드별 --x(왼쪽 위치)/--w(폭)는 피그마 px -->
+          <div
+            class="fc"
+            data-carousel
+            data-interval="4500"
+            role="region"
+            aria-roledescription="carousel"
+            aria-label="토스 포스 주요 기능"
+            data-reveal
+          >
+            <div class="fc__viewport">
+              <div class="fc__track">
+                <article class="fc__slide" aria-roledescription="slide" aria-label="1 / 4">
+                  <div class="fc__text">
+                    <span class="fc__num">1</span>
+                    <h4 class="fc__title">우리 가게 매출 리포트</h4>
+                    <p class="fc__desc">오늘과 이번주 매출과 반품이 얼마인지,<br />같은 시간대로 비교해서 알려드려요.</p>
+                  </div>
+                  <div class="fc__media" style="--x: 259; --w: 537">
+                    <img
+                      src="assets/images/features/slide-1-sales.webp"
+                      width="1074"
+                      height="658"
+                      alt="오늘 매출과 지난주 비교 리포트 화면"
+                      loading="lazy"
+                      draggable="false"
+                    />
+                  </div>
+                </article>
+
+                <!-- 2번 슬라이드는 영상: assets/videos/place-pos-pay-process-2.mp4 를 넣으면 자동 재생됩니다 -->
+                <article class="fc__slide" aria-roledescription="slide" aria-label="2 / 4">
+                  <div class="fc__text">
+                    <span class="fc__num">2</span>
+                    <h4 class="fc__title">고객 관리는 자연스럽게</h4>
+                    <p class="fc__desc">포인트 적립부터 리뷰 관리 어떤 손님인지도 모두 알아볼 수 있도록 하나의 흐름에 포함돼요</p>
+                  </div>
+                  <div class="fc__media fc__media--video" style="--x: 113; --w: 674">
+                    <img
+                      src="assets/images/features/slide-2-customer-poster.webp"
+                      width="1348"
+                      height="670"
+                      alt="결제 화면에서 할인과 포인트를 적용하는 모습"
+                      loading="lazy"
+                      draggable="false"
+                    />
+                    <video
+                      muted
+                      playsinline
+                      loop
+                      preload="none"
+                      data-src="assets/videos/place-pos-pay-process-2.mp4"
+                      aria-hidden="true"
+                    ></video>
+                  </div>
+                </article>
+
+                <article class="fc__slide" aria-roledescription="slide" aria-label="3 / 4">
+                  <div class="fc__text">
+                    <span class="fc__num">3</span>
+                    <h4 class="fc__title">상품별 재고관리도 가능</h4>
+                    <p class="fc__desc">상품별로 언제 얼마나 팔리는지, 얼마나 자주 입고하는지 한 눈에 알 수 있어요.</p>
+                  </div>
+                  <div class="fc__media" style="--x: 110; --w: 679">
+                    <img
+                      src="assets/images/features/slide-3-stock.webp"
+                      width="1358"
+                      height="606"
+                      alt="상품별 입출고 내역 화면"
+                      loading="lazy"
+                      draggable="false"
+                    />
+                  </div>
+                </article>
+
+                <article class="fc__slide" aria-roledescription="slide" aria-label="4 / 4">
+                  <div class="fc__text">
+                    <span class="fc__num">4</span>
+                    <h4 class="fc__title">배달앱 연동도 하나로</h4>
+                    <p class="fc__desc">배달의 민족, 쿠팡이츠, 요기요를 연결해 태블릿 하나로 관리해보세요</p>
+                  </div>
+                  <div class="fc__media" style="--x: 280; --w: 512">
+                    <img
+                      src="assets/images/features/slide-4-delivery.webp"
+                      width="1024"
+                      height="722"
+                      alt="배달 주문을 한 화면에서 관리하는 모습"
+                      loading="lazy"
+                      draggable="false"
+                    />
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <div class="fc__pager" role="tablist" aria-label="슬라이드 선택">
+              <button class="fc__dot" type="button" role="tab" aria-label="1번 기능 보기"></button>
+              <button class="fc__dot" type="button" role="tab" aria-label="2번 기능 보기"></button>
+              <button class="fc__dot" type="button" role="tab" aria-label="3번 기능 보기"></button>
+              <button class="fc__dot" type="button" role="tab" aria-label="4번 기능 보기"></button>
+            </div>
+          </div>
+
+          <!-- 토스 프론트 -->
+          <article class="front">
+            <div class="front__text" data-reveal>
+              <h3 class="feature__title">직원 없어도 1인분하는 <em>프론트</em></h3>
+              <p class="feature__desc">애플페이를 포함한 모든 결제를 지원 하고<br />바쁠 때는 키오스크, 첫화면 커스텀까지</p>
+            </div>
+
+            <div class="front__stage stage">
+              <div class="front__cards marquee" data-marquee data-direction="left" data-speed="26" data-start="0.15">
+                <ul class="marquee__track">
+                  <li class="scene-card scene-card--inset">
+                    <img src="assets/images/front/front-card-1.webp" width="640" height="687" alt="휴대폰을 대고 결제하는 토스 프론트" loading="lazy" />
+                  </li>
+                  <li class="scene-card scene-card--wide">
+                    <img src="assets/images/front/front-card-2.webp" width="640" height="361" alt="카드를 꽂아 결제하는 모습" loading="lazy" />
+                  </li>
+                  <li class="scene-card">
+                    <img src="assets/images/front/front-card-3.webp" width="640" height="361" alt="카드를 터치해 결제하는 모습" loading="lazy" />
+                  </li>
+                  <li class="scene-card">
+                    <img src="assets/images/front/front-card-4.webp" width="640" height="361" alt="바코드로 결제하는 모습" loading="lazy" />
+                  </li>
+                </ul>
+              </div>
+
+              <!-- 화면 속 이미지 (영상으로 바꿔도 됩니다) -->
+              <div class="front__screen-wrap at" style="--x: 563; --y: 65; --w: 195">
+                <img src="assets/images/front/front-screen.webp" width="390" height="626" alt="키오스크 모드 메뉴 화면" loading="lazy" />
+              </div>
+              <img
+                class="front__frame at"
+                style="--x: 38; --y: 0; --w: 822"
+                src="assets/images/front/front-frame.webp"
+                width="1728"
+                height="972"
+                alt=""
+                loading="lazy"
+              />
+            </div>
+          </article>
+
+          <!-- 토스 터미널 -->
+          <article class="terminal">
+            <div class="terminal__text" data-reveal>
+              <h3 class="feature__title">작지만 다양한 기능 <em>터미널</em></h3>
+              <p class="feature__desc">결제 내역을 확인하거나 간편한 취소도 바로<br />작지만 필수적인 기능이 전부 있어요</p>
+            </div>
+
+            <div class="terminal__stage stage">
+              <img
+                class="terminal__img at"
+                style="--x: 47; --y: 0; --w: 912"
+                src="assets/images/terminal/terminal.webp"
+                width="1850"
+                height="1041"
+                alt="영수증이 출력되는 토스 터미널"
+                loading="lazy"
+                data-reveal
+              />
+              <span class="terminal__pill" style="--cx: 613.5; --cy: 149.9; --bob: -0.4s">
+                <span class="pill pill--sm" data-reveal="pop" style="--delay: 0.3s">영수증 출력</span>
+              </span>
+              <span class="terminal__pill" style="--cx: 280.2; --cy: 315.9; --bob: -1.8s">
+                <span class="pill pill--sm" data-reveal="pop" style="--delay: 0.45s">간편 결제 취소</span>
+              </span>
+              <span class="terminal__pill" style="--cx: 698.4; --cy: 378.3; --bob: -3s">
+                <span class="pill pill--sm" data-reveal="pop" style="--delay: 0.6s">결제 내역 확인</span>
+              </span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================== 04 혜택 비교 + 상담 신청 ===================== -->
+      <section class="apply section" id="apply" aria-labelledby="apply-title">
+        <div class="container">
+          <div class="apply__tags" data-reveal="fade">
+            <span class="apply__tag" style="--cx: 293.5; --cy: 52.5; --r: -2.35deg">
+              <span class="tag" style="--delay: 0.15s">월 이용료 0원</span>
+            </span>
+            <span class="apply__tag" style="--cx: 565.7; --cy: 44.7; --r: 5.74deg">
+              <span class="tag" style="--delay: 0.45s">폐업 시 위약금 0원</span>
+            </span>
+          </div>
+
+          <h2 class="apply__title" id="apply-title" data-reveal>지금 상담 신청하면<br />이 모든걸 제공해드려요</h2>
+
+          <!-- 비교 카드 -->
+          <div class="compare">
+            <div class="compare__card compare__card--other" style="--x: 0; --y: 96; --w: 304" data-reveal="left">
+              <img class="compare__img" src="assets/images/compare/other.webp" width="760" height="582" alt="" loading="lazy" />
+              <ul class="compare__list" aria-label="일반 렌탈">
+                <li class="compare__item"><img class="compare__check" src="assets/icons/check-grey.svg" alt="" /><span>늦는 사후 처리</span></li>
+                <li class="compare__item"><img class="compare__check" src="assets/icons/check-grey.svg" alt="" /><span>수수료 발생</span></li>
+                <li class="compare__item"><img class="compare__check" src="assets/icons/check-grey.svg" alt="" /><span>해지 시 위약금</span></li>
+                <li class="compare__item"><img class="compare__check" src="assets/icons/check-grey.svg" alt="" /><span>메뉴 등록 미지원</span></li>
+                <li class="compare__item"><img class="compare__check" src="assets/icons/check-grey.svg" alt="" /><span>무상 수리 지원 X</span></li>
+              </ul>
+            </div>
+
+            <div class="compare__card compare__card--paydv" style="--x: 294; --y: 0; --w: 351; --delay: 0.15s" data-reveal="pop">
+              <div class="compare__brand">
+                <img src="assets/icons/logo-paydv.svg" width="135" height="17" alt="페이앤밴 PAYDV" />
+              </div>
+              <img
+                class="compare__img"
+                src="assets/images/compare/paydv.webp"
+                width="878"
+                height="588"
+                alt="페이앤밴 무상 렌탈 기기 3종"
+                loading="lazy"
+              />
+              <ul class="compare__list" aria-label="페이앤밴">
+                <li class="compare__item" style="--i: 0"><svg class="compare__check" aria-hidden="true"><use href="#i-check-blue" /></svg><span>빠른 서비스 응대</span></li>
+                <li class="compare__item" style="--i: 1"><svg class="compare__check" aria-hidden="true"><use href="#i-check-blue" /></svg><span>월 이용료 0원</span></li>
+                <li class="compare__item" style="--i: 2"><svg class="compare__check" aria-hidden="true"><use href="#i-check-blue" /></svg><span>폐업 시 위약금 0원</span></li>
+                <li class="compare__item" style="--i: 3"><svg class="compare__check" aria-hidden="true"><use href="#i-check-blue" /></svg><span>플레이스 · 메뉴 등록 지원</span></li>
+                <li class="compare__item" style="--i: 4"><svg class="compare__check" aria-hidden="true"><use href="#i-check-blue" /></svg><span>영수증 용지 무료</span></li>
+                <li class="compare__item" style="--i: 5"><svg class="compare__check" aria-hidden="true"><use href="#i-check-blue" /></svg><span>장비 무상 수리 · 교체</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 상담 신청 폼 → Google Apps Script → 구글 시트 + 슬랙 (설정: docs/form-setup.md) -->
+          <form class="apply-form" id="apply-form" data-apply-form novalidate data-reveal>
+            <!-- STEP 1·2 : 매장 상태 / 휴대폰 / 업종 -->
+            <div class="apply-form__panel" data-panel="info">
+              <h3 class="apply-form__title" data-title aria-live="polite">상담을 위해<br />전화번호를 입력해주세요</h3>
+
+              <div class="seg" role="radiogroup" aria-label="매장 상태" data-seg>
+                <span class="seg__thumb" aria-hidden="true"></span>
+                <label class="choice"><input type="radio" name="storeStatus" value="신규 매장 준비중" checked /><span>신규 매장 준비중</span></label>
+                <label class="choice"><input type="radio" name="storeStatus" value="매장 운영 중" /><span>매장 운영 중</span></label>
+              </div>
+
+              <div class="collapse" data-industry-wrap>
+                <div>
+                  <label class="field field--select" data-field="industry">
+                    <span class="sr-only">업종</span>
+                    <select class="field__control" name="industry" required data-industry>
+                      <option value="" disabled selected>업종선택</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+
+              <label class="field" data-field="phone">
+                <span class="sr-only">휴대폰 번호</span>
+                <input
+                  class="field__control field__control--fill"
+                  type="tel"
+                  name="phone"
+                  inputmode="numeric"
+                  autocomplete="tel-national"
+                  placeholder="휴대폰 번호"
+                  maxlength="13"
+                  required
+                  data-phone
+                />
+              </label>
+              <p class="field__error" data-error="phone" role="alert"></p>
+            </div>
+
+            <!-- STEP 3 : 연락 희망 시간 -->
+            <div class="apply-form__panel" data-panel="time" hidden>
+              <button class="apply-form__back" type="button" data-back>이전</button>
+              <h3 class="apply-form__title">마지막으로<br />연락 가능한 시간이 있으신가요?</h3>
+
+              <div class="seg" role="radiogroup" aria-label="연락 희망일" data-seg>
+                <span class="seg__thumb" aria-hidden="true"></span>
+                <label class="choice"><input type="radio" name="contactDay" value="오늘" data-day-offset="0" checked /><span>오늘</span></label>
+                <label class="choice"><input type="radio" name="contactDay" value="내일" data-day-offset="1" /><span>내일</span></label>
+              </div>
+
+              <div class="apply-form__panel" role="radiogroup" aria-label="연락 희망 시간">
+                <label class="choice"><input type="radio" name="contactTime" value="언제든 가능" /><span>언제든 가능</span></label>
+                <div class="time-grid" data-time-grid></div>
+              </div>
+
+              <div class="consent">
+                <label class="consent__label">
+                  <input class="sr-only" type="checkbox" name="consent" data-consent />
+                  <span class="consent__box" aria-hidden="true"></span>
+                  <span>[필수] 개인정보 수집·이용 동의</span>
+                </label>
+                <button class="consent__more" type="button" aria-expanded="false" aria-controls="consent-detail" data-consent-toggle>보기</button>
+              </div>
+              <!-- 개인정보 처리 문구: 실제 운영 정책에 맞게 꼭 확인/수정하세요 -->
+              <dl class="consent__detail" id="consent-detail" hidden>
+                <dt>수집 항목</dt>
+                <dd>휴대폰 번호, 매장 상태, 업종, 연락 희망 시간</dd>
+                <dt>이용 목적</dt>
+                <dd>결제 기기 렌탈 상담 및 안내 연락</dd>
+                <dt>보유 기간</dt>
+                <dd>상담 완료 후 1년 (관계 법령에 따라 보관이 필요한 경우 해당 기간)</dd>
+                <dd>동의를 거부할 수 있으며, 거부 시 상담 신청이 제한됩니다.</dd>
+              </dl>
+
+              <button class="btn-primary" type="submit" data-submit disabled>상담 신청하기</button>
+            </div>
+
+            <!-- 완료 -->
+            <div class="apply-form__panel apply-done" data-panel="done" tabindex="-1" hidden>
+              <svg class="apply-done__icon" viewBox="0 0 72 72" aria-hidden="true">
+                <circle cx="36" cy="36" r="33" fill="none" stroke="#3182F6" stroke-width="4" />
+                <path d="M23 37.5l9 9L50 28" fill="none" stroke="#3182F6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <h3 class="apply-form__title">상담 신청이 완료됐어요</h3>
+              <p class="apply-done__desc">선택하신 시간에 맞춰<br />담당 매니저가 연락드릴게요.</p>
+              <dl class="apply-done__summary" data-summary></dl>
+              <p class="apply-done__note" data-test-note hidden>
+                테스트 모드: 접수 주소(FORM_ENDPOINT)가 아직 설정되지 않아 실제로 전송되지 않았어요.
+              </p>
+            </div>
+
+            <!-- 스팸 방지 (사람에게는 보이지 않는 칸) -->
+            <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <img class="footer__brand" src="assets/icons/logo-paydv.svg" width="135" height="17" alt="페이앤밴 PAYDV" />
+      <!-- TODO: 상호 / 대표자 / 사업자등록번호 / 주소 / 고객센터 등 사업자 정보를 여기에 추가하세요 -->
+      <p>렌탈 조건 및 혜택은 상담 시 자세히 안내드립니다.</p>
+      <p>© PAYDV. All rights reserved.</p>
+    </footer>
+
+    <!-- 하단 고정 상담 버튼 -->
+    <div class="floating-cta" data-floating-cta>
+      <a class="floating-cta__btn" href="#apply" data-cta>무상 렌탈 상담 신청하기</a>
+    </div>
+
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
+  </body>
+</html>

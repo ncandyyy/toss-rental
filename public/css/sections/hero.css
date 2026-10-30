@@ -1,0 +1,135 @@
+/* =========================================================
+   00 히어로 — "잘 되면 계속 쓰고 안되면 반납하고 끝"
+   ========================================================= */
+.hero {
+  background: var(--grey-50);
+}
+
+.hero__inner {
+  padding-top: max(36px, calc(124 * var(--u)));
+}
+
+/* 말풍선: 톡 튀어나온 뒤 둥실둥실 */
+.hero__tooltip-wrap {
+  display: flex;
+  justify-content: center;
+  animation: bob 4s var(--ease-in-out) 1.2s infinite;
+}
+
+/* 타이틀 */
+.hero__title {
+  position: relative;
+  z-index: 0;
+  margin-top: max(14px, calc(21 * var(--u)));
+  font-weight: 700;
+  font-size: max(34px, calc(72.94 * var(--u)));
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: var(--grey-800);
+}
+
+.hero__line {
+  position: relative;
+  display: block;
+}
+
+/* 두 번째 줄 뒤 형광펜: 왼쪽에서 오른쪽으로 그어집니다 */
+.hero__line--marker::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 0.341em;
+  width: 7.787em;
+  height: 0.604em;
+  background: rgb(69 147 252 / 0.7);
+  transform: translateX(calc(-50% + 0.016em)) rotate(-1.21deg);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.9s var(--ease-in-out) 0.55s;
+}
+
+.hero__line--marker.is-in::before {
+  clip-path: inset(0 0 0 0);
+}
+
+/* 혜택 알약 3개 */
+.hero__pills {
+  position: relative;
+  height: max(54px, calc(115 * var(--u)));
+  margin-top: calc(25.75 * var(--u));
+}
+
+.hero__pill {
+  position: absolute;
+  left: calc(var(--cx) * var(--u));
+  top: calc(var(--cy) * var(--u));
+  transform: translate(-50%, -50%) rotate(var(--r, 0deg));
+  animation: bob 4.5s var(--ease-in-out) var(--bob, 0s) infinite;
+}
+
+.hero__pill--top {
+  z-index: 2;
+}
+
+/* 기기 + 라벨 무대 (피그마 y=515 부터) */
+.hero__stage {
+  height: calc(816 * var(--u));
+}
+
+.hero__device {
+  height: auto;
+  pointer-events: none;
+}
+
+.hero__label {
+  z-index: 3;
+  animation: bob-t 5s var(--ease-in-out) var(--bob, 0s) infinite;
+}
+
+/* 공통: 둥실둥실 (translate 속성용 / transform 용) */
+@keyframes bob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+@keyframes bob-t {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* 좁은 화면: 알약을 위 1개 · 아래 2개로 배치해 겹치지 않게 합니다
+   (HTML 인라인 --cx 보다 우선하도록 left/top 을 직접 지정) */
+@media (max-width: 599px) {
+  .hero__pills {
+    height: 92px;
+    margin-top: 14px;
+  }
+
+  .hero__pill:nth-child(1) {
+    left: calc(240 * var(--u));
+    top: 66px;
+  }
+
+  .hero__pill:nth-child(2) {
+    left: calc(430 * var(--u));
+    top: 22px;
+  }
+
+  .hero__pill:nth-child(3) {
+    left: calc(625 * var(--u));
+    top: 70px;
+  }
+}

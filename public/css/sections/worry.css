@@ -1,0 +1,235 @@
+/* =========================================================
+   01 고민 → 해결 — "결제 기기 알아보고 계신데 이런 생각 자꾸 드셨죠?"
+   ========================================================= */
+.worry {
+  /* 세로 간격이 너무 좁아지지 않도록 하는 세로 전용 단위 */
+  --uy: max(var(--u), 0.5px);
+  background: linear-gradient(180deg, var(--grey-300) 0%, var(--white) 61.06%);
+}
+
+/* 상단에 늘어진 비 같은 막대: 천천히 오르내립니다 */
+.worry__rain {
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(320 * var(--u));
+  pointer-events: none;
+}
+
+.worry__rain i {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(10 * var(--u));
+  height: calc(308 * var(--u));
+  background: var(--grey-250);
+  animation: drip var(--t, 6s) var(--ease-in-out) var(--d, 0s) infinite alternate;
+}
+
+@keyframes drip {
+  from {
+    translate: 0 -14%;
+  }
+
+  to {
+    translate: 0 6%;
+  }
+}
+
+.worry__inner {
+  padding-top: max(56px, calc(112 * var(--u)));
+}
+
+.worry__title {
+  position: relative;
+  font-weight: 800;
+  font-size: max(24px, calc(40 * var(--u)));
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: var(--grey-800);
+}
+
+/* ---------- 고민 버블 ---------- */
+.worry__bubbles {
+  position: relative;
+  height: calc(290 * var(--uy));
+  margin-top: calc(32 * var(--uy));
+}
+
+.worry__bubble {
+  position: absolute;
+  z-index: var(--z, 1);
+  left: calc(var(--cx) * var(--u));
+  top: calc(var(--cy) * var(--uy));
+  transform: translate(-50%, -50%) rotate(var(--r, 0deg));
+}
+
+/* 버블에 붙은 이모지 (버블 회전을 되돌려 원래 각도 유지) */
+.worry__emoji {
+  position: absolute;
+  z-index: 2;
+  left: calc(var(--dx) * var(--u));
+  top: calc(50% + var(--dy) * var(--u));
+  width: calc(var(--s) * var(--u));
+  height: auto;
+  transform: translate(-50%, -50%) rotate(calc(var(--r, 0deg) * -1));
+}
+
+.worry__emoji--end {
+  left: calc(100% + var(--dx) * var(--u));
+}
+
+.worry__emoji.is-in {
+  animation: wobble 2.8s var(--ease-in-out) var(--wob, 0.6s) infinite;
+}
+
+@keyframes wobble {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+
+  20% {
+    rotate: -9deg;
+  }
+
+  40% {
+    rotate: 7deg;
+  }
+
+  60% {
+    rotate: -4deg;
+  }
+
+  80% {
+    rotate: 0deg;
+  }
+}
+
+/* ---------- 해결 카드 ---------- */
+.solution {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(768 * var(--u));
+  margin: calc(94 * var(--uy)) auto 0;
+  padding-top: max(36px, calc(64 * var(--u)));
+  border-radius: max(20px, calc(36 * var(--u)));
+  background: var(--white);
+  text-align: center;
+}
+
+.solution__eyebrow {
+  font-weight: 600;
+  font-size: max(14px, calc(24 * var(--u)));
+  line-height: 1.2;
+  color: var(--grey-600);
+}
+
+.solution__title {
+  margin-top: max(8px, calc(16 * var(--u)));
+  padding-inline: 12px;
+  font-weight: 800;
+  font-size: max(22px, calc(48 * var(--u)));
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--grey-800);
+}
+
+.text-grad-paydv {
+  background: linear-gradient(90deg, var(--blue-100) 0%, var(--blue-600) 62.5%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.solution__boxes {
+  display: flex;
+  gap: calc(16 * var(--u));
+  margin-top: max(24px, calc(56 * var(--u)));
+}
+
+.zero-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(10 * var(--u));
+  width: calc(316 * var(--u));
+  height: calc(282 * var(--u));
+  min-height: 120px;
+  border: 1px solid rgb(232 243 255 / 0.6);
+  border-radius: max(14px, calc(24 * var(--u)));
+  background:
+    radial-gradient(70% 220% at 100% 0%, rgb(69 147 252 / 0.2), rgb(144 194 255 / 0)),
+    radial-gradient(44% 147% at 50% 94%, rgb(69 147 252 / 0.2), rgb(144 194 255 / 0)),
+    var(--blue-100);
+}
+
+.zero-box__label {
+  font-weight: 700;
+  font-size: max(16px, calc(40 * var(--u)));
+  line-height: 1.2;
+  color: var(--blue-500);
+  white-space: nowrap;
+}
+
+.zero-box__value {
+  display: flex;
+  font-weight: 800;
+  font-size: max(44px, calc(100.14 * var(--u)));
+  line-height: 1.15;
+  filter: drop-shadow(0 0 calc(20 * var(--u)) rgb(255 255 255 / 0.71));
+}
+
+.grad-zero {
+  display: block;
+  background: linear-gradient(180deg, var(--blue-200), var(--blue-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 숫자가 슬롯처럼 굴러가다 0에서 멈춥니다 */
+.roll {
+  display: inline-block;
+  height: 1.15em;
+  overflow: hidden;
+}
+
+.roll__col {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(-100% + 1.15em));
+  transition: transform 1.8s cubic-bezier(0.15, 0.85, 0.25, 1) var(--delay, 0.2s);
+}
+
+.roll__col > span {
+  height: 1.15em;
+}
+
+.js .zero-box:not(.is-in) .roll__col {
+  transform: translateY(0);
+  transition: none;
+}
+
+/* 카드 아래쪽 기기 이미지 (피그마 y=1012 부터, 카드와 117px 겹침) */
+.solution__devices {
+  position: relative;
+  align-self: center;
+  flex: none;
+  width: calc(860 * var(--u));
+  height: calc(530 * var(--u));
+  margin-top: calc(-117 * var(--u));
+  pointer-events: none;
+}
+
+.solution__devices img {
+  height: auto;
+}
+
+.worry__footnote {
+  margin-top: max(16px, calc(23 * var(--u)));
+  padding: 0 var(--gutter) max(40px, calc(78 * var(--u)));
+}
