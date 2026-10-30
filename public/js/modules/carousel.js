@@ -2,8 +2,9 @@
  * 기능 소개 캐러셀 (어두운 슬라이드)
  *
  * 두 가지 모드로 동작합니다.
- * 1) 스크롤 모드 (기본): [data-carousel-pin] 래퍼 안에서 캐러셀이 화면 전체(위아래·양옆)를 채운 채 고정되고,
+ * 1) 스크롤 모드 (기본): [data-carousel-pin] 래퍼 안에서 캐러셀이 양옆을 꽉 채운 띠가 되어 화면 가운데에 고정되고,
  *    스크롤을 내리는 만큼 슬라이드가 1→4로 넘어갑니다. 4장을 다 보면 다음 섹션으로 내려갑니다.
+ *    화면이 낮으면 안쪽 내용을 줄여서 화면에 맞춥니다.
  * 2) 자동 넘김 모드: 화면 높이가 아주 낮으면(가로로 눕힌 휴대폰 등) 고정 대신 일정 간격으로 자동 넘김.
  *
  * 공통: 오른쪽 인디케이터 클릭, 좌우 스와이프, 키보드 ←/→,
@@ -52,13 +53,25 @@ class FeatureCarousel {
 
     const measure = () => {
       const vh = window.innerHeight;
+      const topbar = document.querySelector(".topbar")?.offsetHeight || 0;
 
-      if (vh >= 460) {
-        // 캐러셀이 화면 전체 높이(vh)를 채우므로, 래퍼 높이 = 화면 높이 + 슬라이드 수 × 1장당 스크롤 거리
-        this.step = Math.max(240, Math.round(vh * 0.5));
-        this.pin.style.setProperty("--pin-h", `${vh + this.step * this.slides.length}px`);
-        this.pin.style.setProperty("--pin-top", "0px");
-        this.pin.classList.add("is-pinned");
+      // 양옆을 채운 모양 그대로 원래 높이를 잽니다
+      this.pin.classList.add("is-pinned");
+      this.pin.style.removeProperty("--pin-vh");
+      this.pin.style.removeProperty("--pin-fit");
+      const h = this.root.offsetHeight;
+      const fit = Math.min(1, (vh - topbar - 24) / h); // 화면이 낮으면 안쪽 내용 축소 비율
+
+      if (fit >= 0.6) {
+        const visualH = Math.round(h * fit);
+        this.step = Math.max(240, Math.round(vh * 0.5)); // 슬라이드 1장당 스크롤 거리
+        const top = Math.round(topbar + (vh - topbar - visualH) / 2); // 상단 바 아래 남은 화면의 세로 가운데
+        this.pin.style.setProperty("--pin-h", `${visualH + this.step * this.slides.length}px`);
+        this.pin.style.setProperty("--pin-top", `${top}px`);
+        if (fit < 1) {
+          this.pin.style.setProperty("--pin-vh", `${visualH}px`);
+          this.pin.style.setProperty("--pin-fit", fit.toFixed(4));
+        }
         this.setMode("scroll");
         this.onScroll();
       } else {
