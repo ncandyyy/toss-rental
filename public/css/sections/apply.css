@@ -2,8 +2,8 @@
    04 혜택 비교 + 상담 신청
    ========================================================= */
 .apply {
-  /* 비교 카드 묶음(폭 645) 전용 단위: 좁은 화면에서도 양옆 여백 16px 유지 */
-  --uc: min(1px, calc((100vw - 32px) / 645));
+  /* 비교 카드 묶음(폭 645) 전용 단위: 좁은 화면에서는 양옆 여백 28px 를 남기고 꽉 채웁니다 */
+  --uc: min(1px, calc((100vw - 56px) / 645));
   padding-bottom: max(96px, calc(54 * var(--u)));
   background: var(--grey-50);
 }
@@ -36,13 +36,26 @@
   clip-path: inset(0 0 0 0);
 }
 
+/* 좁은 화면: 두 태그를 가운데에 겹쳐 붙입니다 (디자인과 같은 모양) */
 @media (max-width: 599px) {
-  .apply__tag:nth-child(1) {
-    left: calc(262 * var(--u));
+  .apply__tags {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    padding: 14px 0 6px;
+  }
+
+  .apply__tag {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: translateY(var(--my, 0px)) rotate(var(--r));
   }
 
   .apply__tag:nth-child(2) {
-    left: calc(605 * var(--u));
+    --my: -5px;
+    margin-left: -12px;
   }
 }
 

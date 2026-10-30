@@ -1,22 +1,124 @@
 /* =========================================================
-   Footer — 사업자 정보는 config.js 가 아니라 여기 HTML에서 직접 수정하세요.
+   Footer — 로고 / 약관 링크 / 사업자 정보 / 저작권 / 토스페이스 고지
    ========================================================= */
 .footer {
-  padding: 32px var(--gutter) calc(110px + env(safe-area-inset-bottom));
-  background: var(--grey-100);
-  font-size: 12px;
-  line-height: 1.7;
-  color: var(--grey-500);
-  text-align: center;
-}
-
-.footer__brand {
-  width: 96px;
-  height: auto;
-  margin: 0 auto 10px;
-  opacity: 0.6;
-}
-
-.footer strong {
+  border-top: 1px solid var(--grey-200);
+  background: var(--white);
   color: var(--grey-600);
+}
+
+.footer__inner {
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: 40px 24px calc(120px + env(safe-area-inset-bottom));
+}
+
+.footer__logo {
+  width: 68px;
+  height: auto;
+}
+
+/* 이용약관 | 개인정보처리방침 | 이메일무단수집거부 */
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 6px;
+  margin-top: 22px;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--grey-700);
+}
+
+.footer__links a + a::before,
+.footer__info span + span::before {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 0.8em;
+  margin: 0 12px;
+  background: var(--grey-250);
+  vertical-align: -0.05em;
+}
+
+.footer__links a:hover {
+  color: var(--grey-900);
+}
+
+.footer__links .is-strong {
+  font-weight: 800;
+  color: var(--grey-900);
+}
+
+.footer__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 26px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.footer__info p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.footer__info a {
+  margin-left: 0.3em;
+}
+
+.footer__copy {
+  margin-top: 18px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  color: var(--grey-500);
+}
+
+.footer__notice {
+  margin-top: 40px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--grey-500);
+}
+
+@media (max-width: 599px) {
+  .footer__inner {
+    padding-top: 32px;
+  }
+
+  .footer__links {
+    font-size: 14px;
+  }
+
+  .footer__info,
+  .footer__copy {
+    font-size: 13px;
+  }
+
+  .footer__copy {
+    font-size: 12px;
+  }
+
+  /* 사업자등록번호는 다음 줄로 (구분선 없이) */
+  .footer__info .footer__wrap {
+    flex-basis: 100%;
+  }
+
+  .footer__info .footer__wrap::before {
+    display: none;
+  }
+
+  .footer__links a + a::before,
+  .footer__info span + span::before {
+    margin: 0 9px;
+  }
+
+  .footer__notice {
+    margin-top: 28px;
+    font-size: 12px;
+  }
 }

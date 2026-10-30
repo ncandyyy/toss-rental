@@ -90,8 +90,9 @@
     <!-- ===================== 상단 플로팅 바 ===================== -->
     <header class="topbar">
       <div class="topbar__inner">
-        <p class="topbar__text">
-          지금 <strong class="topbar__count"><span data-count-up="24">24</span>명</strong>의 사장님이 관심있게 보고 있어요
+        <!-- 누적 조회수: js/modules/view-counter.js 가 Apps Script 에서 받아와 표시합니다 -->
+        <p class="topbar__text" data-view-text>
+          지금까지 <strong class="topbar__count"><span data-view-count data-fallback="24">24</span>명</strong>의 사장님이 관심있게 봤어요
         </p>
         <img class="topbar__fire" src="assets/icons/fire.svg" alt="" width="30" height="30" />
       </div>
@@ -311,7 +312,7 @@
       <section class="reasons section" aria-labelledby="reasons-title">
         <div class="container">
           <h2 class="reasons__title" id="reasons-title" data-reveal>
-            <span class="text-grad-blue">2,000명이 넘는 대표님</span>들이<br />페이앤밴을 선택한 이유
+            <span class="text-grad-blue">2,000명이 넘는 대표님</span>들이<br class="br-m" /> 페이앤밴을 선택한 이유
           </h2>
           <p class="footnote reasons__note" data-reveal style="--delay: 0.1s">※25.10월 ~26.10월 장비 설치건 집계 결과</p>
         </div>
@@ -398,7 +399,9 @@
             />
           </article>
 
-          <!-- 기능 캐러셀: 슬라이드별 --x(왼쪽 위치)/--w(폭)는 피그마 px -->
+          <!-- 기능 캐러셀: 스크롤하면 화면에 고정된 채 4장이 차례로 넘어가고, 다 보면 아래로 내려갑니다.
+               (화면 높이가 부족하면 자동 넘김으로 바뀜) 슬라이드별 --x(왼쪽 위치)/--w(폭)는 피그마 px -->
+          <div class="fc-pin" data-carousel-pin>
           <div
             class="fc"
             data-carousel
@@ -428,8 +431,8 @@
                   </div>
                 </article>
 
-                <!-- 2번 슬라이드는 영상: assets/videos/place-pos-pay-process-2.mp4 를 넣으면 자동 재생됩니다 -->
-                <article class="fc__slide" aria-roledescription="slide" aria-label="2 / 4">
+                <!-- 2번 슬라이드는 영상 (assets/videos/place-pos-pay-process-2.mp4) -->
+                <article class="fc__slide" aria-roledescription="slide" aria-label="2 / 4" data-duration="8300">
                   <div class="fc__text">
                     <span class="fc__num">2</span>
                     <h4 class="fc__title">고객 관리는 자연스럽게</h4>
@@ -500,6 +503,7 @@
               <button class="fc__dot" type="button" role="tab" aria-label="4번 기능 보기"></button>
             </div>
           </div>
+          </div>
 
           <!-- 토스 프론트 -->
           <article class="front">
@@ -526,9 +530,21 @@
                 </ul>
               </div>
 
-              <!-- 화면 속 이미지 (영상으로 바꿔도 됩니다) -->
-              <div class="front__screen-wrap at" style="--x: 563; --y: 65; --w: 195">
-                <img src="assets/images/front/front-screen.webp" width="390" height="626" alt="키오스크 모드 메뉴 화면" loading="lazy" />
+              <!-- 프론트 화면 속 첫 화면(배경화면)이 옆으로 자동으로 넘어갑니다. li 를 추가/삭제하면 됩니다 -->
+              <div class="front__screen-wrap screen-slider at" style="--x: 563; --y: 65; --w: 195" data-screen-slider data-interval="2200" aria-label="토스 프론트 첫 화면 예시">
+                <ul class="screen-slider__track">
+                  <li class="screen-slider__item"><img src="assets/images/front/front-screen.webp" width="390" height="626" alt="키오스크 모드 메뉴 화면" loading="lazy" draggable="false" /></li>
+                  <li class="screen-slider__item"><img src="assets/images/front/wallpapers/wallpaper-brunch.webp" width="480" height="768" alt="브런치 카페 첫 화면" loading="lazy" draggable="false" /></li>
+                  <li class="screen-slider__item"><img src="assets/images/front/wallpapers/wallpaper-latte.webp" width="480" height="768" alt="카페 신메뉴 첫 화면" loading="lazy" draggable="false" /></li>
+                  <li class="screen-slider__item"><img src="assets/images/front/wallpapers/wallpaper-sandwich.webp" width="480" height="768" alt="샌드위치 가게 첫 화면" loading="lazy" draggable="false" /></li>
+                  <li class="screen-slider__item"><img src="assets/images/front/wallpapers/wallpaper-nail.webp" width="480" height="768" alt="네일숍 첫 화면" loading="lazy" draggable="false" /></li>
+                  <li class="screen-slider__item"><img src="assets/images/front/wallpapers/wallpaper-barber.webp" width="480" height="768" alt="바버숍 첫 화면" loading="lazy" draggable="false" /></li>
+                  <li class="screen-slider__item"><img src="assets/images/front/wallpapers/wallpaper-ballet.webp" width="480" height="768" alt="발레 스튜디오 첫 화면" loading="lazy" draggable="false" /></li>
+                  <li class="screen-slider__item"><img src="assets/images/front/wallpapers/wallpaper-flower.webp" width="480" height="768" alt="꽃집 첫 화면" loading="lazy" draggable="false" /></li>
+                  <li class="screen-slider__item"><img src="assets/images/front/wallpapers/wallpaper-botanic.webp" width="480" height="768" alt="식물원 첫 화면" loading="lazy" draggable="false" /></li>
+                  <li class="screen-slider__item"><img src="assets/images/front/wallpapers/wallpaper-flower-market.webp" width="480" height="768" alt="플라워 마켓 첫 화면" loading="lazy" draggable="false" /></li>
+                  <li class="screen-slider__item"><img src="assets/images/front/wallpapers/wallpaper-restaurant.webp" width="480" height="768" alt="레스토랑 첫 화면" loading="lazy" draggable="false" /></li>
+                </ul>
               </div>
               <img
                 class="front__frame at"
@@ -724,10 +740,25 @@
     </main>
 
     <footer class="footer">
-      <img class="footer__brand" src="assets/icons/logo-paydv.svg" width="135" height="17" alt="페이앤밴 PAYDV" />
-      <!-- TODO: 상호 / 대표자 / 사업자등록번호 / 주소 / 고객센터 등 사업자 정보를 여기에 추가하세요 -->
-      <p>렌탈 조건 및 혜택은 상담 시 자세히 안내드립니다.</p>
-      <p>© PAYDV. All rights reserved.</p>
+      <div class="footer__inner">
+        <img class="footer__logo" src="assets/icons/logo-paydv-mono.svg" width="81" height="17" alt="PAYDV" />
+
+        <!-- TODO: 약관 페이지가 준비되면 href 를 실제 주소로 바꾸고 data-pending 을 지워주세요 -->
+        <nav class="footer__links" aria-label="약관 및 정책">
+          <a href="#" data-pending>이용약관</a>
+          <a href="#" data-pending class="is-strong">개인정보처리방침</a>
+          <a href="#" data-pending>이메일무단수집거부</a>
+        </nav>
+
+        <div class="footer__info">
+          <p><span>(주)미르네프로</span><span>대표자 안형권</span><span class="footer__wrap">사업자등록번호 726-81-00834</span></p>
+          <p>대구 중구 동덕로 167 (동인동2가) KT 본관 11층</p>
+          <p>대표전화 <a href="tel:15770115">1577-0115</a></p>
+        </div>
+
+        <p class="footer__copy">COPYRIGHT(C) 2026 BY PAYNVAN ALL RIGHTS RESERVED.</p>
+        <p class="footer__notice">이 페이지에는 토스팀에서 제공한 토스페이스가 적용되어 있습니다.</p>
+      </div>
     </footer>
 
     <!-- 하단 고정 상담 버튼 -->

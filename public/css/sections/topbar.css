@@ -28,25 +28,23 @@
 .topbar__count {
   display: inline-block;
   font-weight: 700;
-  background: linear-gradient(90deg, var(--blue-500), var(--blue-100) 46%);
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(90deg, var(--blue-500) 0%, var(--blue-100) 46%, var(--blue-500) 92%);
+  background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: count-shine 2.6s linear infinite;
 }
 
-.topbar__count.is-bump {
-  animation: count-bump 0.6s var(--ease-spring);
-}
-
-@keyframes count-bump {
-  0% {
-    translate: 0 0.4em;
-    opacity: 0;
+/* 그라디언트가 왼쪽으로 계속 흘러갑니다 (한 칸 = 200% 이동이라 끊김 없음) */
+@keyframes count-shine {
+  from {
+    background-position: 0% 0;
   }
 
-  100% {
-    translate: none;
-    opacity: 1;
+  to {
+    background-position: -200% 0;
   }
 }
 

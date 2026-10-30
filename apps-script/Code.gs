@@ -4,6 +4,7 @@
  * 하는 일
  *  1) 웹사이트 폼에서 보낸 신청서를 구글 시트에 한 줄씩 저장
  *  2) 슬랙 채널로 새 신청 알림 전송
+ *  3) 상단 바에 보여줄 누적 조회수 집계
  *
  * 설정 방법은 docs/form-setup.md 를 보세요. 요약:
  *  - 신청을 받을 구글 시트 > 확장 프로그램 > Apps Script 에 이 파일 내용을 붙여넣기
@@ -75,9 +76,38 @@ function doPost(e) {
   }
 }
 
-// 브라우저로 웹 앱 주소를 열었을 때 동작 확인용
-function doGet() {
+/**
+ * GET 요청
+ *  ?action=view  → 누적 조회수 +1 후 총합 반환 (상단 바 "지금까지 N명")
+ *  ?action=count → 총합만 반환 (같은 방문자가 새로고침한 경우)
+ *  (없음)        → 동작 확인용 응답
+ * 누적 조회수는 프로젝트 설정 > 스크립트 속성 VIEW_COUNT 에 저장됩니다.
+ */
+function doGet(e) {
+  const action = e && e.parameter && e.parameter.action;
+  if (action === 'view') return json_({ ok: true, views: incrementViews_() });
+  if (action === 'count') return json_({ ok: true, views: getViews_() });
   return json_({ ok: true, service: 'paydv-rental-leads' });
+}
+
+/* =========================================================
+   누적 조회수
+   ========================================================= */
+function getViews_() {
+  return Number(PropertiesService.getScriptProperties().getProperty('VIEW_COUNT')) || 0;
+}
+
+function incrementViews_() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(3000)) return getViews_(); // 동시 접속이 몰리면 이번 1건은 건너뜀
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const next = (Number(props.getProperty('VIEW_COUNT')) || 0) + 1;
+    props.setProperty('VIEW_COUNT', String(next));
+    return next;
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 /* =========================================================

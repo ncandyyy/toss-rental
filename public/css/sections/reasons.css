@@ -17,6 +17,17 @@
   color: var(--grey-800);
 }
 
+/* 600px 이상: 한 줄로. 화면이 좁으면 한 줄에 맞게 글자 크기를 줄입니다 (21.6 = 문장 길이/글자 크기) */
+@media (min-width: 600px) {
+  .reasons__title {
+    width: max-content;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    font-size: min(48px, calc((100vw - 48px) / 21.6));
+    white-space: nowrap;
+  }
+}
+
 .reasons__note {
   margin-top: max(14px, calc(26 * var(--u)));
 }

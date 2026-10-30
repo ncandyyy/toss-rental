@@ -1,9 +1,13 @@
 /**
  * 기능 소개 캐러셀 (어두운 슬라이드)
- * - 일정 간격으로 자동 넘김 (화면 밖/탭 숨김/마우스 올림 시 일시정지)
- * - 손가락/마우스로 좌우 스와이프, 오른쪽 인디케이터 클릭, 키보드 ←/→
- * - 슬라이드 안 <video data-src> 는 해당 슬라이드가 보일 때만 재생
- * - 슬라이드별 표시 시간: <article class="fc__slide" data-duration="7000">
+ *
+ * 두 가지 모드로 동작합니다.
+ * 1) 스크롤 모드 (기본): [data-carousel-pin] 래퍼 안에서 캐러셀이 화면에 고정되고,
+ *    스크롤을 내리는 만큼 슬라이드가 1→4로 넘어갑니다. 4장을 다 보면 다음 섹션으로 내려갑니다.
+ * 2) 자동 넘김 모드: 화면 높이가 캐러셀보다 작으면 고정 대신 일정 간격으로 자동 넘김.
+ *
+ * 공통: 오른쪽 인디케이터 클릭, 좌우 스와이프, 키보드 ←/→,
+ *       슬라이드 안 <video data-src> 는 해당 슬라이드가 보일 때만 재생.
  */
 import { CONFIG } from "../config.js";
 
@@ -14,12 +18,15 @@ export function initCarousels(root = document) {
 class FeatureCarousel {
   constructor(root) {
     this.root = root;
+    this.pin = root.closest("[data-carousel-pin]");
     this.viewport = root.querySelector(".fc__viewport");
     this.track = root.querySelector(".fc__track");
     this.slides = [...root.querySelectorAll(".fc__slide")];
     this.dots = [...root.querySelectorAll(".fc__dot")];
     this.interval = Number(root.dataset.interval) || CONFIG.CAROUSEL_INTERVAL;
-    this.index = 0;
+    this.index = -1;
+    this.mode = "auto";
+    this.step = 0;
     this.timer = null;
     this.remaining = 0;
     this.startedAt = 0;
@@ -33,12 +40,115 @@ class FeatureCarousel {
     this.bindSwipe();
     this.bindKeys();
     this.bindVisibility();
-    this.go(0, { instant: true });
+    this.setupPin();
+    if (this.index < 0) this.go(0, { instant: true });
   }
 
-  /* ---------- 이동 ---------- */
-  go(i, { user = false, instant = false } = {}) {
+  /* =========================================================
+     스크롤 고정 모드
+     ========================================================= */
+  setupPin() {
+    if (!this.pin) return;
+
+    const measure = () => {
+      const vh = window.innerHeight;
+      const topbar = document.querySelector(".topbar")?.offsetHeight || 0;
+      const h = this.root.offsetHeight; // transform(축소)과 무관한 원래 높이
+      const avail = vh - topbar - 24;
+      // 화면이 낮으면 캐러셀을 화면에 맞게 줄여서라도 고정 (60% 미만이면 자동 넘김으로)
+      const fit = Math.min(1, avail / h);
+
+      if (fit >= 0.6) {
+        const visualH = h * fit;
+        this.step = Math.max(240, Math.round(vh * 0.5)); // 슬라이드 1장당 스크롤 거리
+        const top = Math.round(topbar + (vh - topbar - visualH) / 2); // 남은 화면의 세로 가운데
+        this.pin.style.setProperty("--pin-h", `${h + this.step * this.slides.length}px`);
+        this.pin.style.setProperty("--pin-top", `${top}px`);
+        this.pin.style.setProperty("--pin-fit", fit.toFixed(4));
+        this.pin.style.setProperty("--pin-gap", `${-(h - visualH).toFixed(1)}px`);
+        this.pin.classList.add("is-pinned");
+        this.setMode("scroll");
+        this.onScroll();
+      } else {
+        this.pin.classList.remove("is-pinned");
+        this.setMode("auto");
+      }
+    };
+
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        this.onScroll();
+      });
+    };
+
+    let resizeTimer;
+    let lastW = window.innerWidth;
+    let lastH = window.innerHeight;
+    window.addEventListener("resize", () => {
+      // 모바일 주소창이 접히는 정도의 작은 높이 변화는 무시
+      if (window.innerWidth === lastW && Math.abs(window.innerHeight - lastH) < 120) return;
+      lastW = window.innerWidth;
+      lastH = window.innerHeight;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(measure, 150);
+    });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    if (document.fonts?.ready) document.fonts.ready.then(measure);
+    measure();
+  }
+
+  setMode(mode) {
+    if (this.mode === mode) return;
+    this.mode = mode;
+    this.root.classList.toggle("is-scroll", mode === "scroll");
+    if (mode === "scroll") {
+      clearTimeout(this.timer);
+      this.startedAt = 0;
+      this.root.classList.remove("is-playing", "is-paused");
+    } else {
+      this.restartTimer();
+    }
+  }
+
+  /** 래퍼 안에서 얼마나 스크롤했는지로 슬라이드를 고릅니다 */
+  progress() {
+    const top = parseFloat(this.pin.style.getPropertyValue("--pin-top")) || 0;
+    const scrolled = top - this.pin.getBoundingClientRect().top;
     const n = this.slides.length;
+    return Math.min(n - 0.0001, Math.max(0, scrolled / this.step));
+  }
+
+  onScroll() {
+    if (this.mode !== "scroll" || !this.step) return;
+    const p = this.progress();
+    const i = Math.floor(p);
+    this.root.style.setProperty("--p", (p - i).toFixed(3));
+    if (i !== this.index) this.go(i);
+  }
+
+  /** 사용자가 고른 슬라이드로 이동 (스크롤 모드면 해당 위치로 화면을 스크롤) */
+  request(i) {
+    const n = this.slides.length;
+    const target = Math.max(0, Math.min(n - 1, i));
+    if (this.mode === "scroll") {
+      const top = parseFloat(this.pin.style.getPropertyValue("--pin-top")) || 0;
+      const pinStart = window.scrollY + this.pin.getBoundingClientRect().top - top;
+      window.scrollTo({ top: pinStart + target * this.step + 2, behavior: this.reduced ? "auto" : "smooth" });
+      this.go(this.index); // 드래그로 밀린 위치 되돌리기
+    } else {
+      this.go((i + n) % n, { user: true });
+    }
+  }
+
+  /* =========================================================
+     슬라이드 이동
+     ========================================================= */
+  go(i, { instant = false } = {}) {
+    const n = this.slides.length;
+    const prev = this.index;
     this.index = (i + n) % n;
 
     if (instant) this.track.style.transition = "none";
@@ -61,26 +171,23 @@ class FeatureCarousel {
       dot.tabIndex = active ? 0 : -1;
     });
 
-    this.syncVideos();
-    this.restartTimer();
-    if (user) this.root.dataset.userInteracted = "true";
+    this.syncVideos(prev !== this.index);
+    if (this.mode === "auto") this.restartTimer();
   }
 
   next() {
     this.go(this.index + 1);
   }
 
-  prev() {
-    this.go(this.index - 1);
-  }
-
-  /* ---------- 자동 재생 ---------- */
+  /* =========================================================
+     자동 넘김 (화면이 낮을 때)
+     ========================================================= */
   slideDuration() {
-    return Number(this.slides[this.index].dataset.duration) || this.interval;
+    return Number(this.slides[this.index]?.dataset.duration) || this.interval;
   }
 
   canPlay() {
-    return this.inView && !this.hovered && !document.hidden && !this.reduced;
+    return this.mode === "auto" && this.inView && !this.hovered && !document.hidden && !this.reduced;
   }
 
   restartTimer() {
@@ -88,14 +195,13 @@ class FeatureCarousel {
     this.startedAt = 0;
     this.remaining = this.slideDuration();
     this.root.style.setProperty("--slide-ms", `${this.remaining}ms`);
-    // 진행 바 애니메이션을 처음부터 다시 시작
     this.root.classList.remove("is-playing", "is-paused");
-    this.root.getBoundingClientRect();
+    this.root.getBoundingClientRect(); // 진행 바 애니메이션을 처음부터
     this.updatePlayState();
   }
 
   updatePlayState() {
-    // 돌고 있던 타이머가 있으면 남은 시간을 계산해 둡니다
+    if (this.mode !== "auto") return;
     if (this.startedAt) {
       this.remaining = Math.max(300, this.remaining - (performance.now() - this.startedAt));
       this.startedAt = 0;
@@ -112,8 +218,10 @@ class FeatureCarousel {
     }
   }
 
-  /* ---------- 영상 ---------- */
-  syncVideos() {
+  /* =========================================================
+     영상
+     ========================================================= */
+  syncVideos(changed = false) {
     this.slides.forEach((slide, k) => {
       const video = slide.querySelector("video");
       if (!video) return;
@@ -124,6 +232,7 @@ class FeatureCarousel {
           video.addEventListener("error", () => video.remove(), { once: true });
           video.src = video.dataset.src;
         }
+        if (changed && video.currentTime > 0) video.currentTime = 0; // 슬라이드에 들어올 때 처음부터
         const p = video.play();
         if (p && p.catch) p.catch(() => {});
       } else if (!video.paused) {
@@ -132,24 +241,19 @@ class FeatureCarousel {
     });
   }
 
-  /* ---------- 입력 ---------- */
+  /* =========================================================
+     입력
+     ========================================================= */
   bindDots() {
-    this.dots.forEach((dot, k) => {
-      dot.addEventListener("click", () => this.go(k, { user: true }));
-    });
+    this.dots.forEach((dot, k) => dot.addEventListener("click", () => this.request(k)));
   }
 
   bindKeys() {
     this.root.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        this.go(this.index + 1, { user: true });
-        this.dots[this.index]?.focus();
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        this.go(this.index - 1, { user: true });
-        this.dots[this.index]?.focus();
-      }
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      e.preventDefault();
+      this.request(this.index + (e.key === "ArrowRight" ? 1 : -1));
+      requestAnimationFrame(() => this.dots[this.index]?.focus({ preventScroll: true }));
     });
   }
 
@@ -159,10 +263,10 @@ class FeatureCarousel {
     let startY = 0;
     let dx = 0;
     let dragging = false;
-    let locked = false; // 가로 스와이프로 판정됨
+    let locked = false;
     let pointerId = null;
 
-    const onDown = (e) => {
+    area.addEventListener("pointerdown", (e) => {
       if (e.pointerType === "mouse" && e.button !== 0) return;
       dragging = true;
       locked = false;
@@ -170,9 +274,9 @@ class FeatureCarousel {
       startX = e.clientX;
       startY = e.clientY;
       pointerId = e.pointerId;
-    };
+    });
 
-    const onMove = (e) => {
+    area.addEventListener("pointermove", (e) => {
       if (!dragging || e.pointerId !== pointerId) return;
       const mx = e.clientX - startX;
       const my = e.clientY - startY;
@@ -188,30 +292,25 @@ class FeatureCarousel {
         clearTimeout(this.timer);
       }
       dx = mx;
-      const w = area.clientWidth || 1;
-      const edge = (this.index === 0 && dx > 0) || (this.index === this.slides.length - 1 && dx < 0);
+      const last = this.slides.length - 1;
+      const edge = (this.index === 0 && dx > 0) || (this.index === last && dx < 0);
       const offset = edge ? dx * 0.35 : dx;
       this.track.style.transform = `translate3d(calc(${-100 * this.index}% + ${offset}px), 0, 0)`;
-      if (Math.abs(dx) > w) dx = Math.sign(dx) * w;
-    };
+    });
 
-    const onUp = () => {
+    const end = () => {
       if (!dragging) return;
       dragging = false;
       this.root.classList.remove("is-dragging");
       if (!locked) return;
       const threshold = Math.min(80, (area.clientWidth || 300) * 0.15);
-      if (dx < -threshold) this.go(this.index + 1, { user: true });
-      else if (dx > threshold) this.go(this.index - 1, { user: true });
-      else this.go(this.index, { user: true });
+      if (dx < -threshold) this.request(this.index + 1);
+      else if (dx > threshold) this.request(this.index - 1);
+      else this.go(this.index);
     };
-
-    area.addEventListener("pointerdown", onDown);
-    area.addEventListener("pointermove", onMove);
-    area.addEventListener("pointerup", onUp);
-    area.addEventListener("pointercancel", onUp);
-    area.addEventListener("lostpointercapture", onUp);
-    // 드래그 중 링크/이미지 클릭 방지
+    area.addEventListener("pointerup", end);
+    area.addEventListener("pointercancel", end);
+    area.addEventListener("lostpointercapture", end);
     area.addEventListener("dragstart", (e) => e.preventDefault());
   }
 
@@ -234,8 +333,7 @@ class FeatureCarousel {
       this.syncVideos();
     });
 
-    const hoverable = window.matchMedia("(hover: hover)").matches;
-    if (hoverable) {
+    if (window.matchMedia("(hover: hover)").matches) {
       this.root.addEventListener("mouseenter", () => {
         this.hovered = true;
         this.updatePlayState();

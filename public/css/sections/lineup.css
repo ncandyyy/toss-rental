@@ -64,9 +64,24 @@
   height: auto;
 }
 
-/* ---------- 기능 캐러셀 ---------- */
-.lineup .fc {
+/* ---------- 기능 캐러셀 (스크롤 고정) ----------
+   .is-pinned 일 때 래퍼 높이만큼 스크롤하는 동안 캐러셀이 화면에 붙어 있습니다.
+   높이(--pin-h)와 고정 위치(--pin-top)는 carousel.js 가 화면 크기에 맞춰 계산합니다. */
+.fc-pin {
+  position: relative;
   margin-top: max(48px, calc(81 * var(--u)));
+}
+
+.fc-pin.is-pinned {
+  height: var(--pin-h);
+  margin-bottom: var(--pin-gap, 0px); /* 축소된 만큼 생기는 빈 공간 제거 */
+}
+
+.fc-pin.is-pinned .fc {
+  position: sticky;
+  top: var(--pin-top, 0px);
+  transform: scale(var(--pin-fit, 1));
+  transform-origin: 50% 0;
 }
 
 /* ---------- 토스 프론트 ---------- */
@@ -111,10 +126,27 @@
   border-radius: calc(6 * var(--u));
 }
 
-.front__screen-wrap img,
-.front__screen-wrap video {
+/* 프론트 화면 속 첫 화면 슬라이드 (screen-slider.js) */
+.screen-slider__track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.75s var(--ease-in-out);
+  will-change: transform;
+}
+
+.screen-slider__track.is-jump {
+  transition: none;
+}
+
+.screen-slider__item {
+  flex: 0 0 100%;
+  height: 100%;
+}
+
+.screen-slider__item img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* 프론트 사용 장면 카드 — 자동으로 흐르는 캐러셀 */

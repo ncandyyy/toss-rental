@@ -72,6 +72,33 @@
   z-index: 2;
 }
 
+/* 마우스를 올리면 '폐업시 위약금 0원'처럼 기울어지며 위로 떠오릅니다 */
+.hero__pill .pill {
+  transform-origin: 50% 60%;
+  cursor: default;
+  transition:
+    opacity 0.8s var(--ease-out) var(--delay, 0s),
+    translate 0.9s var(--ease-out) var(--delay, 0s),
+    scale 0.9s var(--ease-spring) var(--delay, 0s),
+    transform 0.5s var(--ease-spring),
+    box-shadow 0.35s var(--ease-out);
+}
+
+.hero__pill:hover,
+.hero__pill:focus-within {
+  z-index: 3;
+}
+
+.hero__pill:hover .pill {
+  transform: translateY(calc(-20 * var(--u) - 4px)) rotate(var(--hover-r, 3.13deg));
+  box-shadow: 0 14px 30px rgb(49 130 246 / 0.18);
+}
+
+/* 이미 기울어진 가운데 알약은 조금 더 떠오르기만 */
+.hero__pill--top:hover .pill {
+  transform: translateY(calc(-14 * var(--u) - 4px)) rotate(1.5deg) scale(1.03);
+}
+
 /* 기기 + 라벨 무대 (피그마 y=515 부터) */
 .hero__stage {
   height: calc(816 * var(--u));
@@ -110,26 +137,44 @@
   }
 }
 
-/* 좁은 화면: 알약을 위 1개 · 아래 2개로 배치해 겹치지 않게 합니다
-   (HTML 인라인 --cx 보다 우선하도록 left/top 을 직접 지정) */
+/* 좁은 화면: 디자인처럼 세 알약을 가운데에 붙여서(살짝 겹치게) 한 줄로 */
 @media (max-width: 599px) {
   .hero__pills {
-    height: 92px;
-    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: auto;
+    margin-top: 18px;
+    padding: 12px 8px 4px;
   }
 
-  .hero__pill:nth-child(1) {
-    left: calc(240 * var(--u));
-    top: 66px;
+  .hero__pill {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: translateY(var(--my, 0px)) rotate(var(--r, 0deg));
   }
 
   .hero__pill:nth-child(2) {
-    left: calc(430 * var(--u));
-    top: 22px;
+    --my: -9px;
+    margin-inline: -10px;
   }
 
   .hero__pill:nth-child(3) {
-    left: calc(625 * var(--u));
-    top: 70px;
+    --my: 3px;
+  }
+
+  .hero__pills .pill {
+    min-width: 0;
+    padding: 0 1.05em;
+    font-size: 12.5px;
+  }
+
+  .hero__pill:hover .pill {
+    transform: translateY(-8px) rotate(var(--hover-r, 3.13deg));
+  }
+
+  .hero__pill--top:hover .pill {
+    transform: translateY(-5px) rotate(1.5deg) scale(1.03);
   }
 }
