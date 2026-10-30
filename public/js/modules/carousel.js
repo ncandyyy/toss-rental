@@ -1,7 +1,7 @@
 /**
  * 기능 소개 캐러셀 (어두운 슬라이드)
  * - 일정 간격으로 자동으로 넘어갑니다. (화면 밖 / 다른 탭 / 마우스를 올려둔 동안은 멈춤)
- * - 손가락이나 마우스로 좌우로 밀어서 넘길 수 있고, 오른쪽 인디케이터 클릭, 키보드 ←/→ 도 됩니다.
+ * - 손가락이나 마우스로 좌우로 밀어서 넘길 수 있고, 좌우 화살표(데스크톱), 오른쪽 인디케이터 클릭, 키보드 ←/→ 도 됩니다.
  * - 슬라이드 안 <video> 는 해당 슬라이드가 보일 때만 재생합니다.
  * - 슬라이드별 표시 시간: <article class="fc__slide" data-duration="7000">
  */
@@ -171,6 +171,8 @@ class FeatureCarousel {
      ========================================================= */
   bindDots() {
     this.dots.forEach((dot, k) => dot.addEventListener("click", () => this.request(k)));
+    this.root.querySelector("[data-fc-prev]")?.addEventListener("click", () => this.request(this.index - 1));
+    this.root.querySelector("[data-fc-next]")?.addEventListener("click", () => this.request(this.index + 1));
   }
 
   bindKeys() {

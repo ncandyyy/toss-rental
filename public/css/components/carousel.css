@@ -125,6 +125,69 @@
   transition-delay: 0.16s;
 }
 
+/* ---------- 좌우 화살표 (마우스가 있는 기기만) ----------
+   캐러셀에 마우스를 올리면 나타납니다. 넓은 화면에서는 가운데 860px 칼럼 바깥 어두운 여백에 놓입니다. */
+.fc__arrow {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .fc__arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    margin-top: -26px;
+    border: 1px solid rgb(255 255 255 / 0.18);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.12);
+    color: var(--white);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    scale: 0.9;
+    transition:
+      opacity 0.25s,
+      scale 0.25s var(--ease-out),
+      background-color 0.2s;
+  }
+
+  .fc:hover .fc__arrow,
+  .fc__arrow:focus-visible {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .fc__arrow:hover {
+    background: rgb(255 255 255 / 0.24);
+  }
+
+  .fc__arrow:active {
+    scale: 0.94;
+  }
+
+  .fc__arrow svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .fc__arrow--prev {
+    left: max(16px, calc((100% - var(--container)) / 2 - 76px));
+  }
+
+  .fc__arrow--next {
+    right: max(16px, calc((100% - var(--container)) / 2 - 76px));
+  }
+}
+
 /* ---------- 세로 인디케이터 ---------- */
 .fc__pager {
   position: absolute;
