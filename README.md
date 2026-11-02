@@ -66,6 +66,6 @@ npx serve public
       (신청 접수 + 상단 바 누적 조회수가 같은 주소를 씁니다. 비워두면 테스트 모드: 신청은 전송 안 되고 조회수는 24로 표시)
 - [ ] 개인정보 수집·이용 동의 문구 확인 (`index.html` 의 `consent-detail`)
 - [ ] 이용약관 / 개인정보처리방침 / 이메일무단수집거부 링크 주소 넣기 (`index.html` 푸터 TODO, 지금은 "준비 중" 안내)
-- [ ] 도메인이 정해지면 `index.html` 의 `og:image` 를 전체 주소(https://…)로 변경 (카카오톡 미리보기용)
+- [x] 공유 미리보기 이미지 적용 (`assets/images/og/og-image.png`, 1200×630). 도메인을 바꾸면 `index.html` 의 canonical · og:url · og:image 주소도 함께 변경
 - [ ] 광고 링크에 UTM 붙이기 (예: `?utm_source=daangn&utm_campaign=1030`) → 시트/슬랙에 유입 경로가 같이 기록됨
 - [ ] (선택) GA4 / GTM / 메타 픽셀 설치 시 `form_start`, `form_step`, `lead_submit`, `cta_click` 이벤트가 자동 전송됨
