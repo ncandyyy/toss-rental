@@ -52,16 +52,10 @@ function doPost(e) {
     if (!/^01[016789]\d{7,8}$/.test(phoneDigits)) return json_({ ok: false, error: 'invalid_phone' });
     if (!data.consent) return json_({ ok: false, error: 'consent_required' });
 
-    // 같은 번호로 10분 안에 다시 보내면 중복으로 보고 저장하지 않음
-    const cache = CacheService.getScriptCache();
-    const dupKey = 'lead_' + phoneDigits;
-    if (cache.get(dupKey)) return json_({ ok: true, duplicate: true });
-
     const receivedAt = Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss');
     const sheet = getSheet_();
     sheet.appendRow(buildRow_(data, receivedAt));
     const rowNumber = sheet.getLastRow();
-    cache.put(dupKey, '1', 600);
 
     try {
       notifySlack_(data, sheet, rowNumber, receivedAt);
