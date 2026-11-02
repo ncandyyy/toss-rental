@@ -166,49 +166,81 @@ function formatPhone_(v) {
 /* =========================================================
    슬랙
    ========================================================= */
+/**
+ * 슬랙 워크플로 웹훅으로 보낼 변수 이름 (워크플로 빌더에서 만든 변수 이름과 똑같아야 합니다)
+ * 워크플로에 변수를 더 만들면 여기에도 이름을 추가하세요. 추가로 쓸 수 있는 값:
+ *   receivedAt (접수일시), sheetUrl (시트에서 해당 행 바로가기)
+ */
+const SLACK_FIELDS = ['contactDay', 'industry', 'contactTime', 'storeStatus', 'contactDate', 'phone'];
+
 // 슬랙에는 상담에 필요한 정보만 보냅니다. (처리상태·유입 경로·랜딩 URL·기기 정보는 시트에만 저장)
 function notifySlack_(d, sheet, rowNumber, receivedAt) {
   const url = PropertiesService.getScriptProperties().getProperty('SLACK_WEBHOOK_URL');
   if (!url) return;
 
   const sheetUrl = `${sheet.getParent().getUrl()}#gid=${sheet.getSheetId()}&range=A${rowNumber}`;
-  const when = `${d.contactDay || ''}${d.contactDate ? ` (${d.contactDate})` : ''} ${d.contactTime || ''}`.trim();
-
-  const payload = {
-    text: `새 렌탈 상담 신청: ${formatPhone_(d.phone)} · ${d.industry || ''}`,
-    blocks: [
-      { type: 'header', text: { type: 'plain_text', text: '🔔 새 렌탈 상담 신청' } },
-      {
-        type: 'section',
-        fields: [
-          { type: 'mrkdwn', text: `*휴대폰*\n${formatPhone_(d.phone)}` },
-          { type: 'mrkdwn', text: `*연락 희망*\n${when}` },
-          { type: 'mrkdwn', text: `*매장 상태*\n${d.storeStatus || '-'}` },
-          { type: 'mrkdwn', text: `*업종*\n${d.industry || '-'}` },
-          { type: 'mrkdwn', text: `*접수일시*\n${receivedAt}` },
-        ],
-      },
-      {
-        type: 'context',
-        elements: [{ type: 'mrkdwn', text: `<${sheetUrl}|시트에서 보기 (${rowNumber}행)>` }],
-      },
-    ],
+  const values = {
+    storeStatus: d.storeStatus,
+    industry: d.industry,
+    phone: formatPhone_(d.phone),
+    contactDay: d.contactDay,
+    contactDate: d.contactDate,
+    contactTime: d.contactTime,
+    receivedAt: receivedAt,
+    sheetUrl: sheetUrl,
   };
 
-  UrlFetchApp.fetch(url, {
+  let payload;
+  if (url.indexOf('/triggers/') > -1) {
+    // 워크플로 웹훅 (hooks.slack.com/triggers/...): 변수만 글자로 보냅니다. 메시지 모양은 워크플로에서 정합니다.
+    payload = {};
+    SLACK_FIELDS.forEach((key) => {
+      payload[key] = values[key] === undefined || values[key] === null ? '' : String(values[key]);
+    });
+  } else {
+    // 일반 수신 웹훅 (hooks.slack.com/services/...): 메시지를 직접 만들어 보냅니다.
+    const when = `${d.contactDay || ''}${d.contactDate ? ` (${d.contactDate})` : ''} ${d.contactTime || ''}`.trim();
+    payload = {
+      text: `새 렌탈 상담 신청: ${values.phone} · ${d.industry || ''}`,
+      blocks: [
+        { type: 'header', text: { type: 'plain_text', text: '🔔 새 렌탈 상담 신청' } },
+        {
+          type: 'section',
+          fields: [
+            { type: 'mrkdwn', text: `*휴대폰*\n${values.phone}` },
+            { type: 'mrkdwn', text: `*연락 희망*\n${when}` },
+            { type: 'mrkdwn', text: `*매장 상태*\n${d.storeStatus || '-'}` },
+            { type: 'mrkdwn', text: `*업종*\n${d.industry || '-'}` },
+            { type: 'mrkdwn', text: `*접수일시*\n${receivedAt}` },
+          ],
+        },
+        { type: 'context', elements: [{ type: 'mrkdwn', text: `<${sheetUrl}|시트에서 보기 (${rowNumber}행)>` }] },
+      ],
+    };
+  }
+
+  const res = UrlFetchApp.fetch(url, {
     method: 'post',
     contentType: 'application/json',
     payload: JSON.stringify(payload),
     muteHttpExceptions: true,
   });
+  if (res.getResponseCode() >= 300) {
+    console.error('Slack 전송 실패', res.getResponseCode(), res.getContentText());
+  }
 }
 
 /* =========================================================
-   유틸 / 설정용 함수 (Apps Script 편집기에서 직접 실행)
+   유틸
    ========================================================= */
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
+
+/* =========================================================
+   ▼ 일회용: 처음 설정할 때만 편집기에서 직접 실행합니다.
+     설정과 테스트가 끝나면 이 아래(setup, testSubmit)는 지워도 됩니다.
+   ========================================================= */
 
 /** 처음 한 번 실행: 시트와 머리글을 만들고 필요한 권한을 승인받습니다. */
 function setup() {
@@ -216,7 +248,7 @@ function setup() {
   UrlFetchApp.fetch('https://slack.com', { muteHttpExceptions: true }); // 외부 요청 권한 승인용
 }
 
-/** 테스트: 가짜 신청 한 건을 저장하고 슬랙 알림을 보냅니다. */
+/** 테스트: 가짜 신청 한 건을 저장하고 슬랙 알림을 보냅니다. (확인 후 시트의 테스트 행은 지워주세요) */
 function testSubmit() {
   const res = doPost({
     postData: {
