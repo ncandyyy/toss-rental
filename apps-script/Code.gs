@@ -16,14 +16,16 @@
 const SHEET_NAME = '신청목록';
 
 // 시트 열 순서 (바꾸고 싶으면 이 배열과 buildRow_ 를 함께 수정)
+// 앞 6개는 상담용으로 보는 열, '처리상태'부터 뒤는 기록용 열이라 한꺼번에 숨겨두기 좋게 맨 뒤에 모았습니다.
 const HEADERS = [
   '접수일시',
-  '처리상태',
   '매장 상태',
   '업종',
   '휴대폰',
   '연락 희망일',
   '연락 희망 시간',
+  '처리상태',
+  '개인정보 동의',
   'utm_source',
   'utm_medium',
   'utm_campaign',
@@ -55,13 +57,14 @@ function doPost(e) {
     const dupKey = 'lead_' + phoneDigits;
     if (cache.get(dupKey)) return json_({ ok: true, duplicate: true });
 
+    const receivedAt = Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss');
     const sheet = getSheet_();
-    sheet.appendRow(buildRow_(data));
+    sheet.appendRow(buildRow_(data, receivedAt));
     const rowNumber = sheet.getLastRow();
     cache.put(dupKey, '1', 600);
 
     try {
-      notifySlack_(data, sheet, rowNumber);
+      notifySlack_(data, sheet, rowNumber, receivedAt);
     } catch (slackErr) {
       // 슬랙 실패해도 신청 자체는 저장됐으므로 성공 처리
       console.error('Slack notify failed', slackErr);
@@ -125,16 +128,17 @@ function getSheet_() {
   return sheet;
 }
 
-function buildRow_(d) {
+function buildRow_(d, receivedAt) {
   const contactDay = d.contactDate ? `${d.contactDay} (${d.contactDate})` : d.contactDay;
   return [
-    Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss'),
-    '신규',
+    receivedAt,
     d.storeStatus,
     d.industry,
     formatPhone_(d.phone),
     contactDay,
     d.contactTime,
+    '신규',
+    d.consent ? '동의' : '',
     d.utm_source,
     d.utm_medium,
     d.utm_campaign,
@@ -162,13 +166,13 @@ function formatPhone_(v) {
 /* =========================================================
    슬랙
    ========================================================= */
-function notifySlack_(d, sheet, rowNumber) {
+// 슬랙에는 상담에 필요한 정보만 보냅니다. (처리상태·유입 경로·랜딩 URL·기기 정보는 시트에만 저장)
+function notifySlack_(d, sheet, rowNumber, receivedAt) {
   const url = PropertiesService.getScriptProperties().getProperty('SLACK_WEBHOOK_URL');
   if (!url) return;
 
   const sheetUrl = `${sheet.getParent().getUrl()}#gid=${sheet.getSheetId()}&range=A${rowNumber}`;
   const when = `${d.contactDay || ''}${d.contactDate ? ` (${d.contactDate})` : ''} ${d.contactTime || ''}`.trim();
-  const source = [d.utm_source, d.utm_campaign].filter(Boolean).join(' / ') || '직접 유입';
 
   const payload = {
     text: `새 렌탈 상담 신청: ${formatPhone_(d.phone)} · ${d.industry || ''}`,
@@ -181,14 +185,12 @@ function notifySlack_(d, sheet, rowNumber) {
           { type: 'mrkdwn', text: `*연락 희망*\n${when}` },
           { type: 'mrkdwn', text: `*매장 상태*\n${d.storeStatus || '-'}` },
           { type: 'mrkdwn', text: `*업종*\n${d.industry || '-'}` },
+          { type: 'mrkdwn', text: `*접수일시*\n${receivedAt}` },
         ],
       },
       {
         type: 'context',
-        elements: [
-          { type: 'mrkdwn', text: `유입: ${source}` },
-          { type: 'mrkdwn', text: `<${sheetUrl}|시트에서 보기 (${rowNumber}행)>` },
-        ],
+        elements: [{ type: 'mrkdwn', text: `<${sheetUrl}|시트에서 보기 (${rowNumber}행)>` }],
       },
     ],
   };

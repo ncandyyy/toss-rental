@@ -134,28 +134,30 @@ export function initApplyForm() {
     if (e.target.name === "contactTime" || e.target.name === "consent") updateSubmit();
   });
 
-  // 오늘 남은 시간이 없으면 '오늘'을 막고 '내일'로
+  // 연락 희망일: 주말·쉬는 날을 건너뛴 가까운 영업일 2개로 버튼을 채웁니다
   function refreshDay() {
-    const todayRadio = form.querySelector('input[name="contactDay"][data-day-offset="0"]');
-    const tomorrowRadio = form.querySelector('input[name="contactDay"][data-day-offset="1"]');
-    const { hour } = nowInZone();
-    const lastHour = Math.max(...CONFIG.CONTACT_HOURS);
-    const todayClosed = hour >= lastHour;
-    todayRadio.disabled = todayClosed;
-    if (todayClosed && todayRadio.checked) {
-      tomorrowRadio.checked = true;
-      tomorrowRadio.dispatchEvent(new Event("change", { bubbles: true }));
-    }
-    refreshTimes();
+    const days = contactDays();
+    const radios = [...form.querySelectorAll('input[name="contactDay"]')];
+    radios.forEach((radio, i) => {
+      const day = days[i];
+      const changed = radio.dataset.date !== day.date;
+      radio.value = day.label;
+      radio.dataset.date = day.date;
+      radio.dataset.today = day.isToday ? "1" : "";
+      radio.closest("label").querySelector("[data-day-label]").textContent = day.label;
+      if (changed && radio.checked && i !== 0) radio.checked = false; // 날짜가 바뀌었으면 첫 번째로
+    });
+    if (!radios.some((r) => r.checked)) radios[0].checked = true;
+    radios.find((r) => r.checked).dispatchEvent(new Event("change", { bubbles: true }));
   }
 
-  // '오늘'이면 이미 지난 시간은 선택 불가
+  // 오늘이면 이미 지난 시간은 선택 불가
   function refreshTimes() {
-    const offset = Number(form.querySelector('input[name="contactDay"]:checked')?.dataset.dayOffset || 0);
+    const isToday = form.querySelector('input[name="contactDay"]:checked')?.dataset.today === "1";
     const { hour } = nowInZone();
     timeGrid.querySelectorAll("input").forEach((input) => {
       const h = Number(input.dataset.hour);
-      input.disabled = offset === 0 && h <= hour;
+      input.disabled = isToday && h <= hour;
       if (input.disabled && input.checked) input.checked = false;
     });
     updateSubmit();
@@ -226,13 +228,13 @@ export function initApplyForm() {
   });
 
   function collect() {
-    const offset = Number(form.querySelector('input[name="contactDay"]:checked')?.dataset.dayOffset || 0);
+    const day = form.querySelector('input[name="contactDay"]:checked');
     return {
       storeStatus: form.elements.storeStatus.value,
       industry: industry.value,
       phone: formatPhone(phone.value),
-      contactDay: form.elements.contactDay.value,
-      contactDate: dateInZone(offset),
+      contactDay: day.value,
+      contactDate: day.dataset.date,
       contactTime: form.elements.contactTime.value,
       consent: consent.checked,
       submittedAt: new Date().toISOString(),
@@ -341,11 +343,31 @@ function nowInZone() {
   return { year: get("year"), month: get("month"), day: get("day"), hour: get("hour") };
 }
 
-/** 오늘 + offset 일의 날짜 (YYYY-MM-DD) */
-function dateInZone(offset = 0) {
-  const { year, month, day } = nowInZone();
-  const d = new Date(Date.UTC(year, month - 1, day + offset));
-  return d.toISOString().slice(0, 10);
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+
+/**
+ * 연락 희망일 선택지 2개 (주말·CONFIG.HOLIDAYS 제외, 오늘 상담 시간이 끝났으면 오늘도 제외)
+ * - 오늘·내일이 둘 다 영업일이면 "오늘" / "내일"
+ * - 그 밖에는 요일 이름: 금요일엔 "금요일" / "월요일", 주말엔 "월요일" / "화요일"
+ */
+function contactDays() {
+  const now = nowInZone();
+  const lastHour = Math.max(...CONFIG.CONTACT_HOURS);
+  const holidays = new Set(CONFIG.HOLIDAYS || []);
+  const days = [];
+  for (let offset = 0; days.length < 2 && offset < 30; offset += 1) {
+    const d = new Date(Date.UTC(now.year, now.month - 1, now.day + offset));
+    const date = d.toISOString().slice(0, 10);
+    const dow = d.getUTCDay();
+    if (dow === 0 || dow === 6 || holidays.has(date)) continue;
+    if (offset === 0 && now.hour >= lastHour) continue;
+    days.push({ date, offset, dow, isToday: offset === 0 });
+  }
+  const todayTomorrow = days[0].offset === 0 && days[1].offset === 1;
+  return days.map((d) => ({
+    ...d,
+    label: todayTomorrow ? (d.offset === 0 ? "오늘" : "내일") : `${WEEKDAYS[d.dow]}요일`,
+  }));
 }
 
 function shortDate(iso) {

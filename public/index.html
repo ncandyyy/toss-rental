@@ -687,8 +687,9 @@
 
               <div class="seg" role="radiogroup" aria-label="연락 희망일" data-seg>
                 <span class="seg__thumb" aria-hidden="true"></span>
-                <label class="choice"><input type="radio" name="contactDay" value="오늘" data-day-offset="0" checked /><span>오늘</span></label>
-                <label class="choice"><input type="radio" name="contactDay" value="내일" data-day-offset="1" /><span>내일</span></label>
+                <!-- 주말·공휴일을 건너뛴 가까운 영업일 2개가 들어갑니다 (예: 금요일엔 금요일/월요일, 주말엔 월요일/화요일) -->
+                <label class="choice"><input type="radio" name="contactDay" value="오늘" data-day-slot="0" checked /><span data-day-label>오늘</span></label>
+                <label class="choice"><input type="radio" name="contactDay" value="내일" data-day-slot="1" /><span data-day-label>내일</span></label>
               </div>
 
               <div class="apply-form__panel" role="radiogroup" aria-label="연락 희망 시간">
