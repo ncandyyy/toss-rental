@@ -6,37 +6,29 @@
 
 ---
 
-## 1. 슬랙 웹훅 만들기 (알림 받을 채널 정하기)
+## 1. 슬랙 워크플로 웹훅 만들기 (알림 받을 채널 정하기)
 
-두 가지 중 편한 방법을 쓰면 됩니다. Apps Script 가 주소 모양을 보고 알아서 맞춰 보냅니다.
+메시지 모양은 슬랙 워크플로에서 직접 꾸미고, Apps Script 는 아래 변수 값만 보냅니다.
 
-### A. 워크플로 빌더 웹훅 (`hooks.slack.com/triggers/...`) — 메시지 모양을 슬랙에서 직접 꾸밀 때
 1. 슬랙 → 워크플로 빌더 → 새 워크플로 → 시작 방법 **웹훅에서 시작**
 2. 변수를 아래 이름 그대로 만듭니다 (모두 텍스트)
 
    | 변수 | 내용 | 예 |
    | --- | --- | --- |
+   | `receivedAt` | 접수일시 | 2026-11-06 10:31:05 |
    | `storeStatus` | 매장 상태 | 매장 운영 중 |
    | `industry` | 업종 | 카페 · 디저트 |
    | `phone` | 휴대폰 | 010-1234-5678 |
    | `contactDay` | 연락 희망일 (요일) | 월요일 |
    | `contactDate` | 연락 희망일 (날짜) | 2026-11-09 |
    | `contactTime` | 연락 희망 시간 | 오후 14시 |
-   | `receivedAt` (선택) | 접수일시 | 2026-11-06 10:31:05 |
    | `sheetUrl` (선택) | 시트 해당 행 바로가기 | https://docs.google.com/... |
 
-   선택 변수를 만들었다면 `apps-script/Code.gs` 의 `SLACK_FIELDS` 에도 이름을 추가하세요.
+   변수를 더하거나 빼면 `apps-script/Code.gs` 의 `SLACK_FIELDS` 목록도 똑같이 맞춰주세요.
 3. 다음 단계 **채널에 메시지 보내기** 에서 변수를 넣어 메시지를 꾸미고 게시
 4. 생성된 `https://hooks.slack.com/triggers/...` 주소를 복사
 
-### B. 수신 웹훅 (`hooks.slack.com/services/...`) — 정해진 모양으로 바로 받을 때
-1. https://api.slack.com/apps → **Create New App** → From scratch
-2. 앱 이름(예: `렌탈 신청 알림`), 워크스페이스 선택
-3. 왼쪽 **Incoming Webhooks** → 켜기(On) → **Add New Webhook to Workspace**
-4. 알림 받을 채널 선택 → 허용
-5. 생성된 `https://hooks.slack.com/services/...` 주소를 복사
-
-어느 쪽이든 웹훅 주소는 비밀번호처럼 다루세요. 코드나 저장소에 넣지 말고 아래 2단계의 스크립트 속성에만 넣습니다.
+웹훅 주소는 비밀번호처럼 다루세요. 코드나 저장소에 넣지 말고 아래 2단계의 스크립트 속성에만 넣습니다.
 
 ## 2. 구글 시트 + Apps Script 준비
 

@@ -162,56 +162,30 @@ function formatPhone_(v) {
    ========================================================= */
 /**
  * 슬랙 워크플로 웹훅으로 보낼 변수 이름 (워크플로 빌더에서 만든 변수 이름과 똑같아야 합니다)
- * 워크플로에 변수를 더 만들면 여기에도 이름을 추가하세요. 추가로 쓸 수 있는 값:
- *   receivedAt (접수일시), sheetUrl (시트에서 해당 행 바로가기)
+ * 메시지 모양은 슬랙 워크플로에서 정하고, 여기서는 값만 보냅니다.
+ * 쓸 수 있는 값: receivedAt, storeStatus, industry, phone, contactDay, contactDate, contactTime, sheetUrl
  */
-const SLACK_FIELDS = ['contactDay', 'industry', 'contactTime', 'storeStatus', 'contactDate', 'phone'];
+const SLACK_FIELDS = ['receivedAt', 'storeStatus', 'industry', 'phone', 'contactDay', 'contactDate', 'contactTime'];
 
 // 슬랙에는 상담에 필요한 정보만 보냅니다. (처리상태·유입 경로·랜딩 URL·기기 정보는 시트에만 저장)
 function notifySlack_(d, sheet, rowNumber, receivedAt) {
   const url = PropertiesService.getScriptProperties().getProperty('SLACK_WEBHOOK_URL');
   if (!url) return;
 
-  const sheetUrl = `${sheet.getParent().getUrl()}#gid=${sheet.getSheetId()}&range=A${rowNumber}`;
   const values = {
+    receivedAt: receivedAt,
     storeStatus: d.storeStatus,
     industry: d.industry,
     phone: formatPhone_(d.phone),
     contactDay: d.contactDay,
     contactDate: d.contactDate,
     contactTime: d.contactTime,
-    receivedAt: receivedAt,
-    sheetUrl: sheetUrl,
+    sheetUrl: `${sheet.getParent().getUrl()}#gid=${sheet.getSheetId()}&range=A${rowNumber}`,
   };
-
-  let payload;
-  if (url.indexOf('/triggers/') > -1) {
-    // 워크플로 웹훅 (hooks.slack.com/triggers/...): 변수만 글자로 보냅니다. 메시지 모양은 워크플로에서 정합니다.
-    payload = {};
-    SLACK_FIELDS.forEach((key) => {
-      payload[key] = values[key] === undefined || values[key] === null ? '' : String(values[key]);
-    });
-  } else {
-    // 일반 수신 웹훅 (hooks.slack.com/services/...): 메시지를 직접 만들어 보냅니다.
-    const when = `${d.contactDay || ''}${d.contactDate ? ` (${d.contactDate})` : ''} ${d.contactTime || ''}`.trim();
-    payload = {
-      text: `새 렌탈 상담 신청: ${values.phone} · ${d.industry || ''}`,
-      blocks: [
-        { type: 'header', text: { type: 'plain_text', text: '🔔 새 렌탈 상담 신청' } },
-        {
-          type: 'section',
-          fields: [
-            { type: 'mrkdwn', text: `*휴대폰*\n${values.phone}` },
-            { type: 'mrkdwn', text: `*연락 희망*\n${when}` },
-            { type: 'mrkdwn', text: `*매장 상태*\n${d.storeStatus || '-'}` },
-            { type: 'mrkdwn', text: `*업종*\n${d.industry || '-'}` },
-            { type: 'mrkdwn', text: `*접수일시*\n${receivedAt}` },
-          ],
-        },
-        { type: 'context', elements: [{ type: 'mrkdwn', text: `<${sheetUrl}|시트에서 보기 (${rowNumber}행)>` }] },
-      ],
-    };
-  }
+  const payload = {};
+  SLACK_FIELDS.forEach((key) => {
+    payload[key] = values[key] === undefined || values[key] === null ? '' : String(values[key]);
+  });
 
   const res = UrlFetchApp.fetch(url, {
     method: 'post',
