@@ -63,7 +63,7 @@ npx serve public
 ## 오픈 전 체크리스트
 
 - [ ] `public/js/config.js` 의 `FORM_ENDPOINT` 에 Apps Script 웹 앱 주소 넣기 → [docs/form-setup.md](docs/form-setup.md)
-      (신청 접수 + 상단 바 누적 조회수가 같은 주소를 씁니다. 비워두면 테스트 모드: 신청은 전송 안 되고 조회수는 24로 표시)
+      (신청 접수 + 상단 바 누적 조회수가 같은 주소를 씁니다. 비워두면 테스트 모드: 신청은 전송 안 되고 상단 바는 숫자 없이 "많은 사장님이 관심있게 보고 있어요"로 표시)
 - [ ] 개인정보 수집·이용 동의 문구 확인 (`index.html` 의 `consent-detail`)
 - [ ] 이용약관 / 개인정보처리방침 / 이메일무단수집거부 링크 주소 넣기 (`index.html` 푸터 TODO, 지금은 "준비 중" 안내)
 - [x] 공유 미리보기 이미지 적용 (`assets/images/og/og-image.png`, 1200×630). 도메인을 바꾸면 `index.html` 의 canonical · og:url · og:image 주소도 함께 변경

@@ -18,21 +18,21 @@
 }
 
 /* 600px 이상: 한 줄로. 화면이 좁으면 한 줄에 맞게 글자 크기를 줄입니다
-   (20.3 = 문장 폭 ÷ 글자 크기. 제목 문구를 바꾸면 이 숫자도 다시 맞춰야 합니다) */
+   (19.2 = 문장 폭 ÷ 글자 크기. 제목 문구를 바꾸면 이 숫자도 다시 맞춰야 합니다) */
 @media (min-width: 600px) {
   .reasons__title {
     width: max-content;
     margin-left: 50%;
     transform: translateX(-50%);
-    font-size: min(48px, calc((100vw - 48px) / 20.3));
+    font-size: min(48px, calc((100vw - 48px) / 19.2));
     white-space: nowrap;
   }
 }
 
-/* 600px 미만: 두 줄. 작은 휴대폰에서도 첫 줄 양옆에 20px 여백이 남도록 (13.7 = 첫 줄 폭 ÷ 글자 크기) */
+/* 600px 미만: 두 줄. 작은 휴대폰에서도 첫 줄 양옆에 20px 여백이 남도록 (12.8 = 첫 줄 폭 ÷ 글자 크기) */
 @media (max-width: 599px) {
   .reasons__title {
-    font-size: min(26px, calc((100vw - 40px) / 13.7));
+    font-size: min(26px, calc((100vw - 40px) / 12.8));
   }
 }
 
