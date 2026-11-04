@@ -15,11 +15,15 @@
   gap: 2px;
   min-height: var(--topbar-h);
   padding: 10px;
+  overflow: hidden;
 }
 
+/* 항상 한 줄. 휴대폰 글자 크기 설정이 크거나 화면이 좁아 넘치면
+   view-counter.js 가 --fit(1 = 원래 크기)을 넘치는 만큼만 줄입니다 */
 .topbar__text {
   font-weight: 600;
-  font-size: max(14px, calc(24 * var(--u)));
+  font-size: calc(var(--fit, 1) * max(14px, calc(24 * var(--u))));
+  white-space: nowrap;
   line-height: 1.2;
   color: var(--grey-50);
   text-align: center;
