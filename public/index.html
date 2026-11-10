@@ -52,6 +52,7 @@
     <link rel="stylesheet" href="css/components/carousel.css" />
     <link rel="stylesheet" href="css/components/form.css" />
     <link rel="stylesheet" href="css/components/floating-cta.css" />
+    <link rel="stylesheet" href="css/components/sheet.css" />
     <link rel="stylesheet" href="css/sections/topbar.css" />
     <link rel="stylesheet" href="css/sections/hero.css" />
     <link rel="stylesheet" href="css/sections/worry.css" />
@@ -763,10 +764,22 @@
       </div>
     </footer>
 
-    <!-- 하단 고정 상담 버튼 -->
+    <!-- 하단 고정 상담 버튼: 누르면 아래 신청 창이 열립니다 -->
     <div class="floating-cta" data-floating-cta>
-      <a class="floating-cta__btn" href="#apply" data-cta>무상 렌탈 상담 신청하기</a>
+      <a class="floating-cta__btn" href="#apply" data-cta data-sheet-open>무료 상담 신청하기</a>
     </div>
+
+    <!-- 신청 창: 휴대폰은 아래에서 올라오는 창, 데스크톱은 가운데 창 (js/modules/apply-sheet.js)
+         폼을 따로 두지 않고, 열 때 페이지의 신청 폼(#apply-form)을 이 안으로 옮겨왔다가 닫으면 제자리로 돌려놓습니다 -->
+    <dialog class="sheet" aria-label="무료 상담 신청" data-apply-sheet>
+      <div class="sheet__head" data-sheet-grab>
+        <span class="sheet__handle" aria-hidden="true"></span>
+        <button class="sheet__close" type="button" aria-label="닫기" data-sheet-close>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </div>
+      <div class="sheet__body" data-sheet-body></div>
+    </dialog>
 
     <div class="toast" role="status" aria-live="polite" data-toast></div>
   </body>

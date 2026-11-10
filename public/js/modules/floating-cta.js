@@ -1,6 +1,7 @@
 /**
  * 하단 고정 상담 버튼
  * 히어로 영역을 지나면 나타나고, 신청 폼이 화면에 보이면 숨습니다.
+ * 누르면 신청 창이 열립니다 (apply-sheet.js).
  */
 import { track } from "./analytics.js";
 

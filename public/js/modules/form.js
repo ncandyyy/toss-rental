@@ -271,6 +271,12 @@ export function initApplyForm() {
       panel.hidden = !active;
       panel.classList.toggle("is-entering", active);
     });
+    // 신청 창 안에 있을 때는 창 안에서만 맨 위로
+    const sheetBody = form.closest("[data-sheet-body]");
+    if (sheetBody) {
+      sheetBody.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     const top = form.getBoundingClientRect().top;
     const topbar = document.querySelector(".topbar")?.offsetHeight || 0;
     if (top < topbar || top > window.innerHeight * 0.6) {
