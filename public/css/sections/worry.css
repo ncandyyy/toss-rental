@@ -37,6 +37,7 @@
 
 .worry__inner {
   padding-top: max(56px, calc(112 * var(--u)));
+  padding-bottom: max(48px, calc(96 * var(--u)));
 }
 
 .worry__title {
@@ -227,9 +228,4 @@
 
 .solution__devices img {
   height: auto;
-}
-
-.worry__footnote {
-  margin-top: max(16px, calc(23 * var(--u)));
-  padding: 0 var(--gutter) max(40px, calc(78 * var(--u)));
 }
