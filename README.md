@@ -69,4 +69,5 @@ npx serve public
 - [ ] 이용약관 / 개인정보처리방침 / 이메일무단수집거부 링크 주소 넣기 (`index.html` 푸터 TODO, 지금은 "준비 중" 안내)
 - [x] 공유 미리보기 이미지 적용 (`assets/images/og/og-image.png`, 1200×630). 도메인을 바꾸면 `index.html` 의 canonical · og:url · og:image 주소도 함께 변경
 - [ ] 광고 링크에 UTM 붙이기 (예: `?utm_source=daangn&utm_campaign=1030`) → 시트/슬랙에 유입 경로가 같이 기록됨
+- [x] 네이버 전환 추적: 공통 스크립트(`index.html` 맨 아래, 계정 ID `s_2bd1a5b078d9`) + 신청완료(lead) 전환은 신청이 실제로 접수됐을 때 `js/modules/analytics.js` 에서 전송
 - [ ] (선택) GA4 / GTM / 메타 픽셀 설치 시 `form_start`, `form_step`, `lead_submit`, `cta_click` 이벤트가 자동 전송됨

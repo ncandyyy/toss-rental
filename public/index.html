@@ -782,5 +782,18 @@
     </dialog>
 
     <div class="toast" role="status" aria-live="polite" data-toast></div>
+
+    <!-- NAVER 공통 스크립트 (방문·유입 분석). 신청완료(lead) 전환은 신청이 실제로 접수된 순간
+         js/modules/analytics.js 에서 wcs.trans({ type: "lead" }) 로 보냅니다 -->
+    <script type="text/javascript" src="https://wcs.naver.net/wcslog.js"></script>
+    <script type="text/javascript">
+      if (!wcs_add) var wcs_add = {};
+      wcs_add["wa"] = "s_2bd1a5b078d9";
+      if (!_nasa) var _nasa = {};
+      if (window.wcs) {
+        wcs.inflow();
+        wcs_do();
+      }
+    </script>
   </body>
 </html>
